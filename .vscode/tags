@@ -1,0 +1,38 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ALLOWED_HOSTS	../vizzly/settings.py	/^ALLOWED_HOSTS = []$/;"	kind:variable	line:28
+AUTH_PASSWORD_VALIDATORS	../vizzly/settings.py	/^AUTH_PASSWORD_VALIDATORS = [$/;"	kind:variable	line:87
+BASE_DIR	../vizzly/settings.py	/^BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))$/;"	kind:variable	line:16
+DATABASES	../vizzly/settings.py	/^DATABASES = {$/;"	kind:variable	line:76
+DEBUG	../vizzly/settings.py	/^DEBUG = True$/;"	kind:variable	line:26
+INSTALLED_APPS	../vizzly/settings.py	/^INSTALLED_APPS = [$/;"	kind:variable	line:33
+LANGUAGE_CODE	../vizzly/settings.py	/^LANGUAGE_CODE = 'en-us'$/;"	kind:variable	line:106
+MIDDLEWARE	../vizzly/settings.py	/^MIDDLEWARE = [$/;"	kind:variable	line:42
+ROOT_URLCONF	../vizzly/settings.py	/^ROOT_URLCONF = 'vizzly.urls'$/;"	kind:variable	line:52
+STATIC_URL	../vizzly/settings.py	/^STATIC_URL = '\/static\/'$/;"	kind:variable	line:120
+TEMPLATES	../vizzly/settings.py	/^TEMPLATES = [$/;"	kind:variable	line:54
+TIME_ZONE	../vizzly/settings.py	/^TIME_ZONE = 'UTC'$/;"	kind:variable	line:108
+USE_I18N	../vizzly/settings.py	/^USE_I18N = True$/;"	kind:variable	line:110
+USE_L10N	../vizzly/settings.py	/^USE_L10N = True$/;"	kind:variable	line:112
+USE_TZ	../vizzly/settings.py	/^USE_TZ = True$/;"	kind:variable	line:114
+WSGI_APPLICATION	../vizzly/settings.py	/^WSGI_APPLICATION = 'vizzly.wsgi.application'$/;"	kind:variable	line:70
+__init__.py	../vizzly/__init__.py	1;"	kind:file	line:1
+admin	../vizzly/urls.py	/^from django.contrib import admin$/;"	kind:namespace	line:17
+application	../vizzly/wsgi.py	/^application = get_wsgi_application()$/;"	kind:variable	line:16
+django	../manage.py	/^            import django$/;"	kind:namespace	line:14
+execute_from_command_line	../manage.py	/^        from django.core.management import execute_from_command_line$/;"	kind:namespace	line:8
+get_wsgi_application	../vizzly/wsgi.py	/^from django.core.wsgi import get_wsgi_application$/;"	kind:namespace	line:12
+manage.py	../manage.py	1;"	kind:file	line:1
+os	../manage.py	/^import os$/;"	kind:namespace	line:2
+os	../vizzly/settings.py	/^import os$/;"	kind:namespace	line:13
+os	../vizzly/wsgi.py	/^import os$/;"	kind:namespace	line:10
+settings.py	../vizzly/settings.py	1;"	kind:file	line:1
+sys	../manage.py	/^import sys$/;"	kind:namespace	line:3
+url	../vizzly/urls.py	/^from django.conf.urls import url$/;"	kind:namespace	line:16
+urlpatterns	../vizzly/urls.py	/^urlpatterns = [$/;"	kind:variable	line:19
+urls.py	../vizzly/urls.py	1;"	kind:file	line:1
+wsgi.py	../vizzly/wsgi.py	1;"	kind:file	line:1
