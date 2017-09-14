@@ -43,8 +43,10 @@
 
 {% block content %}
   <div class="row">
-    <div class="well page">
-      <p>This is the home page. Try to do something from the menu.</p>
-    </div>
+    {{ div|safe }}
   </div>
+{% endblock %}
+
+{% block extras %}
+    {{ script|safe }}
 {% endblock %}
