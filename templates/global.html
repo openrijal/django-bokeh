@@ -17,18 +17,18 @@
           <li><a href="/sub1/">Subplot 1</a></li>
           <li><a href="/sub2/">Subplot 2</a></li>
         </ul>
-      </li>
+      </li>The
     </ul>
   </li>
 </ul>
-{% if is_loggedin %}
-<ul class="nav navbar-nav navbar-right">
-<!-- <form class="navbar-form">
+<form class="navbar-form">
   <div class="form-group">
     <input type="text" class="form-control" placeholder="Search">
   </div>
   <button type="submit" class="btn btn-raised btn-warning btn-sm">&gt;&gt;</button>
-</form> -->
+</form>
+{% if is_loggedin %}
+<ul class="nav navbar-nav navbar-right">
   {% if is_admin %}
   <li><a href="~admin/">Administration</a></li>
   {% endif %}
@@ -43,8 +43,10 @@
 
 {% block content %}
   <div class="row">
-    <div class="well page">
-      <p>This is the home page. Try to do something from the menu.</p>
-    </div>
+    {{ div|safe }}
   </div>
+{% endblock %}
+
+{% block extras %}
+    {{ script|safe }}
 {% endblock %}
