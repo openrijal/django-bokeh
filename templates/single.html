@@ -28,7 +28,11 @@
 {% block content %}
   <div class="row">
     {% if plot_available %}
+    {% for div in divs %}
+    <div class="col-md-6">
       {{ div|safe }}
+    </div>
+    {% endfor %}
     {% endif %}
   </div>
 {% endblock %}
