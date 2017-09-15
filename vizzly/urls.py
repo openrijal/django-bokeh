@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from .views import index, single, xglobal, hide_glyph, mute_glyph, bar_colormapped, bar_nested_colormapped, bar_nested, \
-    bar_mixed, bar_stacked
+    bar_mixed, bar_stacked, slider_widget
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^chart5/$', bar_mixed, name='chart5'),
     url(r'^legend1/$', hide_glyph, name='legend1'),
     url(r'^legend2/$', mute_glyph, name='legend2'),
+    url(r'^widget1/$', slider_widget, name='widget1'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
 ]

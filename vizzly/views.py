@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bokeh.models import ColumnDataSource, FactorRange, value
+from bokeh.layouts import column
+from bokeh.models import ColumnDataSource, FactorRange, value, CustomJS, Slider
 from bokeh.transform import factor_cmap
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -12,7 +13,6 @@ from bokeh.embed import components
 from bokeh.palettes import Spectral4, Spectral6
 from bokeh.sampledata.stocks import AAPL, IBM, MSFT, GOOG
 
-import pandas as pd
 import numpy as np
 from scipy.stats import gaussian_kde
 
@@ -154,7 +154,7 @@ def bar_colormapped(request):
     p.legend.orientation = "horizontal"
     p.legend.location = "top_center"
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -199,7 +199,7 @@ def bar_nested_colormapped(request):
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -242,7 +242,7 @@ def bar_stacked(request):
     p.legend.location = "top_left"
     p.legend.orientation = "horizontal"
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -284,7 +284,7 @@ def bar_nested(request):
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -324,7 +324,7 @@ def bar_mixed(request):
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -354,7 +354,7 @@ def hide_glyph(request):
     p.legend.location = "top_left"
     p.legend.click_policy = "hide"
 
-    script, div = components(p, CDN)
+    script, div = components(p)
 
     if div:
         plot_available = True
@@ -384,7 +384,48 @@ def mute_glyph(request):
     p.legend.location = "top_left"
     p.legend.click_policy = "mute"
 
-    script, div = components(p, CDN)
+    script, div = components(p)
+
+    if div:
+        plot_available = True
+
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+               'plot_available': plot_available,
+               'script': script, 'div': div}
+    return render(request, 'generic_chart.html', context)
+
+@login_required(login_url='/login/')
+def slider_widget(request):
+    is_loggedin = True if request.user.is_authenticated else False
+    is_admin = True if request.user.is_superuser else False
+    username = request.user.username
+
+    plot_available = False
+
+    x = [x * 0.005 for x in range(0, 200)]
+    y = x
+
+    source = ColumnDataSource(data=dict(x=x, y=y))
+
+    plot = figure(plot_width=400, plot_height=400)
+    plot.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
+
+    callback = CustomJS(args=dict(source=source), code="""
+        var data = source.data;
+        var f = cb_obj.value
+        x = data['x']
+        y = data['y']
+        for (i = 0; i < x.length; i++) {
+            y[i] = Math.pow(x[i], f)
+        }
+        source.change.emit();
+    """)
+
+    slider = Slider(start=0.1, end=4, value=1, step=.1, title="power")
+    slider.js_on_change('value', callback)
+
+    layout = column(slider, plot)
+    script, div = components(layout)
 
     if div:
         plot_available = True
