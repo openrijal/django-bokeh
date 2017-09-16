@@ -3,14 +3,14 @@ from __future__ import unicode_literals
 
 from bokeh.layouts import column
 from bokeh.models import ColumnDataSource, FactorRange, value, CustomJS, Slider
-from bokeh.transform import factor_cmap
+from bokeh.transform import factor_cmap, dodge
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.palettes import Spectral4, Spectral6
+from bokeh.palettes import Spectral4, Spectral6, Spectral11
 from bokeh.sampledata.stocks import AAPL, IBM, MSFT, GOOG
 
 import numpy as np
@@ -122,7 +122,39 @@ def xglobal(request):
     username = request.user.username
     plot_available = False
 
-    script, div = components(plot, CDN)
+    div = script = ''
+
+    colors = ["red", "orange", "yellow", "cyan", "magenta", "#e97cfd", "#c969cc", "#878dcf", "#ec4d70",
+              "#a9d0d3", "#918cbf", "#e85d30"]
+
+    data = plot1_example().pivot_table(values='Claims', index='Month', columns='Dealer').fillna(0).reset_index()
+
+    columns = data.columns.tolist()
+    columns.remove('Month')
+
+    # x_axis_data = [(month, dealer) for month in data['Month'] for dealer in columns]
+
+    # to_zip = [data[c].tolist() for c in columns]
+
+    # print(*to_zip)
+
+    # y_axis_data = sum(zip(*to_zip), ())
+
+    source = ColumnDataSource(data)
+
+    p = figure(x_range=list(source.data['Month']), plot_width=1200, title="something")
+
+    for i in range(-2, len(columns) - 2):
+        p.vbar(x=dodge('Month', i / (len(columns) + 1), range=p.x_range), top=columns[i], width=0.12, source=source,
+               color=colors[i])
+
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+
+    script, div = components(p)
+
     if div:
         plot_available = True
 
@@ -172,19 +204,32 @@ def bar_nested_colormapped(request):
 
     plot_available = False
 
-    fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
-    years = ['2015', '2016', '2017']
+    fruits = ['2016-06-01', '2016-07-01', '2016-08-01', '2016-09-01', '2016-10-01']
+    years = ['26992', '68748', '43654']
 
-    data = {'fruits': fruits,
-            '2015': [2, 1, 4, 3, 2, 4],
-            '2016': [5, 3, 3, 2, 4, 6],
-            '2017': [3, 2, 4, 4, 5, 3]}
+    # data = {'fruits': fruits,
+    #         '26992': [2, 1, 4, 3, 2, 4],
+    #         '68748': [5, 3, 3, 2, 4, 6],
+    #         '43654': [3, 2, 4, 4, 5, 3]}
+    data = dict({
+        '26992': [2, 1, 4, 3, 2, 4],
+        '68748': [5, 3, 3, 2, 4, 6],
+        '43654': [3, 2, 4, 4, 5, 3]
+    })
 
     palette = ["#c9d9d3", "#718dbf", "#e84d60"]
 
     # this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
     x = [(fruit, year) for fruit in fruits for year in years]
-    counts = sum(zip(data['2015'], data['2016'], data['2017']), ())  # like an hstack
+    # like an hstack (2, 5, 3, 1, 3, 2, 4, 3, 4, 3, 2, 4, 2, 4, 5, 4, 6, 3)
+    # counts = sum(zip(data['26992'], data['68748'], data['43654']), ())
+    new_list = []
+    for k in data.keys():
+        new_list.append(data[k])
+
+    print(new_list)
+
+    counts = sum(zip(new_list), ())
 
     source = ColumnDataSource(data=dict(x=x, counts=counts))
 
@@ -364,6 +409,7 @@ def hide_glyph(request):
                'script': script, 'div': div}
     return render(request, 'generic_chart.html', context)
 
+
 @login_required(login_url='/login/')
 def mute_glyph(request):
     is_loggedin = True if request.user.is_authenticated else False
@@ -393,6 +439,7 @@ def mute_glyph(request):
                'plot_available': plot_available,
                'script': script, 'div': div}
     return render(request, 'generic_chart.html', context)
+
 
 @login_required(login_url='/login/')
 def slider_widget(request):

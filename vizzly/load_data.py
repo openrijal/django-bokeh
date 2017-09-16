@@ -94,12 +94,11 @@ def load_ewt_part(part):
 def load_sqdf_dtc(dtc, start='2000-01-01 00:00:00', end='2100-01-01 00:00:00'):
     connection = engine.connect()
     res = pd.read_sql((
-                      'SELECT EVENT_OCCURRED,ODO_MILES FROM sqdf WHERE DTC = %(dtc)s AND EVENT_OCCURRED_2 BETWEEN %(start)s AND %(end)s'),
-                      connection,
-                      params={"dtc": dtc, "start": start, "end": end})
+        'SELECT EVENT_OCCURRED,ODO_MILES FROM sqdf WHERE DTC = %(dtc)s AND EVENT_OCCURRED_2 BETWEEN %(start)s AND %(end)s'),
+        connection,
+        params={"dtc": dtc, "start": start, "end": end})
     connection.close()
     return res
-
 
 
 def load_sqdf_dtc_all(start='2000-01-01 00:00:00', end='2100-01-01 00:00:00'):
@@ -107,5 +106,15 @@ def load_sqdf_dtc_all(start='2000-01-01 00:00:00', end='2100-01-01 00:00:00'):
     res = pd.read_sql(
         ('SELECT EVENT_OCCURRED,ODO_MILES FROM sqdf WHERE EVENT_OCCURRED_2 BETWEEN %(start)s AND %(end)s'), connection,
         params={"start": start, "end": end})
+    connection.close()
+    return res
+
+
+def plot1_example():
+    connection = engine.connect()
+    raw_sql = '''
+        select DATE_FORMAT(STR_TO_DATE(`REPAIR-DT`, '%%Y-%%m-%%d'), '%%Y-%%m-01') "Month",`RPR-DLR` "Dealer", count(1) "Claims" from ewt group by DATE_FORMAT(STR_TO_DATE(`REPAIR-DT`, '%%Y-%%m-%%d'), '%%Y-%%m-01'), `RPR-DLR` ORDER BY STR_TO_DATE(`REPAIR-DT`, '%%Y-%%m-%%d') asc;
+    '''
+    res = pd.read_sql(raw_sql, connection)
     connection.close()
     return res
