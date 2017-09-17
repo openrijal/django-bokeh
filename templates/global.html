@@ -21,7 +21,10 @@
     <div class="col-md-12">
     <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#myModal"><i
             class="glyphicon glyphicon-plus"></i> Add Plot</a>
-
+    {% if plot_available %}
+    <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i
+        class="glyphicon glyphicon-remove"></i> Clear All</a>
+    {% endif %}
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
         <div class="modal-dialog">

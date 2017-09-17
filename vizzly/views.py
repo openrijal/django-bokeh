@@ -28,7 +28,7 @@ def clear_session(request):
 
     plot_available = False
 
-    clear_bool = bool(request.POST.get('clear_all')) if 'clear_all' in request.POST else 0
+    clear_bool = bool(request.GET.get('clear_all')) if 'clear_all' in request.GET else 0
 
     if clear_bool:
         request.session['json_in_session'] = ''
