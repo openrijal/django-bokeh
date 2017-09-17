@@ -1,19 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bokeh.models import ColumnDataSource, FactorRange, Range1d
-from bokeh.transform import factor_cmap
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
+import numpy as np
+from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import CDN
-from bokeh.embed import components
-from bokeh.palettes import viridis
-
-import numpy as np
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from scipy.stats import gaussian_kde
 
+from vizzly import global_ewt_plot
 from .load_data import *
 from .utils import *
 
@@ -110,33 +106,7 @@ def view_global_ewt(request):
 
         print(json_data)
 
-        sql_data = json_to_sql(json_data)
-        data = get_dataframe(sql_data)
-
-        columns = data.columns.tolist()
-        columns.remove('x')
-
-        x_axis_data = [(x, z) for x in data['x'] for z in columns]
-
-        to_zip = [data[c].tolist() for c in columns]
-
-        y_axis_data = sum(zip(*to_zip), ())
-
-        source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
-
-        p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-                   title="Chart with Zip implementation")
-
-        p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
-               fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
-                                      end=len(columns)))
-
-        p.y_range.start = 0
-        p.x_range.range_padding = 0.1
-        p.xaxis.major_label_orientation = 1
-        p.xgrid.grid_line_color = None
-
-        script, div = components(p)
+        script, div = components(global_ewt_plot.get_plot(json_data))
 
         if div:
             plot_available = True
