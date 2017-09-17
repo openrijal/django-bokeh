@@ -80,7 +80,7 @@ def view_single(request):
     return render(request, 'single.html', context)
 
 
-def view_global(request):
+def view_global_ewt(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username

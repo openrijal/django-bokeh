@@ -161,8 +161,12 @@
     </div>
 
     {% if plot_available %}
+{#        {% for div in divs %}#}
+        <div class="col-md-6">
             {{ div|safe }}
-        {% endif %}
+        </div>
+{#        {% endfor %}#}
+    {% endif %}
 {% endblock %}
 
 {% block extras %}

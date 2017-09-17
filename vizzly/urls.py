@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from .views import index, view_single, view_global
+from .views import index, view_single, view_global_ewt
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, name='logout'),
 
     url(r'^single/$', view_single, name='single'),
-    url(r'^global/$', view_global, name='global'),
+    url(r'^global/$', view_global_ewt, name='global'),
     # url(r'^chart1/$', bar_colormapped, name='chart1'),
     # url(r'^chart2/$', bar_nested_colormapped, name='chart2'),
     # url(r'^chart3/$', bar_nested, name='chart3'),
