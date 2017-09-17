@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from base64 import b64encode, b64decode
-
-from bokeh.models import ColumnDataSource, FactorRange, Range1d
+from bokeh.layouts import layout
+from bokeh.models import ColumnDataSource, FactorRange, TextInput
 from bokeh.transform import factor_cmap
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -107,6 +106,9 @@ def view_global_ewt(request):
     username = request.user.username
     plot_available = False
 
+    def update():
+        print("YOYO")
+
     div = script = ''
     plots = list()
     json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
@@ -147,7 +149,7 @@ def view_global_ewt(request):
 
             source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
 
-            p = figure(x_range=FactorRange(*x_axis_data), plot_width=400, plot_height=400,
+            p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
                        title="Chart with Zip implementation")
 
             p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
@@ -159,7 +161,22 @@ def view_global_ewt(request):
             p.xaxis.major_label_orientation = 1
             p.xgrid.grid_line_color = None
 
-            plots.append(p)
+            eng = TextInput(title="ENG")
+            tran = TextInput(title="TRAN")
+            miles = TextInput(title="MILES")
+
+            controls = [eng, tran, miles]
+            for control in controls:
+                control.on_change('value', lambda attr, old, new: update())
+
+            sizing_mode = 'fixed'
+
+            l = layout([
+                [eng, tran, miles],
+                [p],
+            ], sizing_mode=sizing_mode)
+
+            plots.append(l)
 
     script, divs = components(tuple(plots))
 
