@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load manipulators %}
+
 {% block title %}Welcome, {{ username }}{% endblock %}
 
 {% block actions %}
@@ -170,8 +172,11 @@
 
         {% elif divs %}
             {% for div in divs %}
-            <div class="col-md-12">
+            <div class="col-md-10">
                 {{ div|safe }}
+            </div>
+            <div class="col-md-2">
+                <input type="text" id="eng_{{ div|get_plot_id }}" />
             </div>
             {% endfor %}
 
