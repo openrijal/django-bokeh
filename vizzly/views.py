@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bokeh.layouts import column
-from bokeh.models import ColumnDataSource, FactorRange, value, CustomJS, Slider
-from bokeh.transform import factor_cmap, dodge
+from bokeh.models import ColumnDataSource, FactorRange
+from bokeh.transform import factor_cmap
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.palettes import Spectral4, Spectral6, Spectral11
-from bokeh.sampledata.stocks import AAPL, IBM, MSFT, GOOG
+from bokeh.palettes import viridis
 
 import numpy as np
 from scipy.stats import gaussian_kde
@@ -30,41 +28,8 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-# @login_required(login_url='/login/')
-# def single(request):
-#     is_loggedin = True if request.user.is_authenticated else False
-#     is_admin = True if request.user.is_superuser else False
-#     username = request.user.username
-#     plot_available = False
-
-#     # some data here
-#     x = [1, 3, 5, 7, 9, 11, 13]
-#     y = [1, 2, 3, 4, 5, 6, 7]
-#     title = 'y = f(x)'
-
-#     # plot params
-#     plot = figure(title=title,
-#                   x_axis_label='X-Axis',
-#                   y_axis_label='Y-Axis',
-#                   plot_width=400,
-#                   plot_height=400)
-
-#     # some plot function
-#     plot.line(x, y, legend='f(x)', line_width=2)
-
-#     # plot = figure()
-#     # plot.circle([1, 2], [3, 4])
-
-#     script, div = components(plot, CDN)
-#     if div:
-#         plot_available = True
-
-#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available':plot_available, 'script': script, 'div': div}
-#     return render(request, 'single.html', context)
-
-
 @login_required(login_url='/login/')
-def single(request):
+def view_single(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
@@ -116,37 +81,30 @@ def single(request):
 
 
 @login_required(login_url='/login/')
-def xglobal(request):
+def view_global(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
     plot_available = False
-
-    div = script = ''
-
-    colors = ["red", "orange", "yellow", "cyan", "magenta", "#e97cfd", "#c969cc", "#878dcf", "#ec4d70",
-              "#a9d0d3", "#918cbf", "#e85d30"]
 
     data = plot1_example().pivot_table(values='Claims', index='Month', columns='Dealer').fillna(0).reset_index()
 
     columns = data.columns.tolist()
     columns.remove('Month')
 
-    # x_axis_data = [(month, dealer) for month in data['Month'] for dealer in columns]
+    x_axis_data = [(month, dealer) for month in data['Month'] for dealer in columns]
 
-    # to_zip = [data[c].tolist() for c in columns]
+    to_zip = [data[c].tolist() for c in columns]
 
-    # print(*to_zip)
+    y_axis_data = sum(zip(*to_zip), ())
 
-    # y_axis_data = sum(zip(*to_zip), ())
+    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
 
-    source = ColumnDataSource(data)
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
+               title="Chart with Zip implementation", toolbar_location=None, tools="")
 
-    p = figure(x_range=list(source.data['Month']), plot_width=1200, title="something")
-
-    for i in range(-2, len(columns) - 2):
-        p.vbar(x=dodge('Month', i / (len(columns) + 1), range=p.x_range), top=columns[i], width=0.12, source=source,
-               color=colors[i])
+    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+           fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1, end=2))
 
     p.y_range.start = 0
     p.x_range.range_padding = 0.1
@@ -163,321 +121,302 @@ def xglobal(request):
     return render(request, 'global.html', context)
 
 
-@login_required(login_url='/login/')
-def bar_colormapped(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
-    counts = [5, 3, 4, 2, 4, 6]
-
-    source = ColumnDataSource(data=dict(fruits=fruits, counts=counts))
-
-    p = figure(x_range=fruits, plot_height=350, toolbar_location=None, title="Fruit Counts")
-    p.vbar(x='fruits', top='counts', width=0.9, source=source, legend="fruits",
-           line_color='white', fill_color=factor_cmap('fruits', palette=Spectral6, factors=fruits))
-
-    p.xgrid.grid_line_color = None
-    p.y_range.start = 0
-    p.y_range.end = 9
-    p.legend.orientation = "horizontal"
-    p.legend.location = "top_center"
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def bar_nested_colormapped(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    fruits = ['2016-06-01', '2016-07-01', '2016-08-01', '2016-09-01', '2016-10-01']
-    years = ['26992', '68748', '43654']
-
-    # data = {'fruits': fruits,
-    #         '26992': [2, 1, 4, 3, 2, 4],
-    #         '68748': [5, 3, 3, 2, 4, 6],
-    #         '43654': [3, 2, 4, 4, 5, 3]}
-    data = dict({
-        '26992': [2, 1, 4, 3, 2, 4],
-        '68748': [5, 3, 3, 2, 4, 6],
-        '43654': [3, 2, 4, 4, 5, 3]
-    })
-
-    palette = ["#c9d9d3", "#718dbf", "#e84d60"]
-
-    # this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
-    x = [(fruit, year) for fruit in fruits for year in years]
-    # like an hstack (2, 5, 3, 1, 3, 2, 4, 3, 4, 3, 2, 4, 2, 4, 5, 4, 6, 3)
-    # counts = sum(zip(data['26992'], data['68748'], data['43654']), ())
-    new_list = []
-    for k in data.keys():
-        new_list.append(data[k])
-
-    print(new_list)
-
-    counts = sum(zip(new_list), ())
-
-    source = ColumnDataSource(data=dict(x=x, counts=counts))
-
-    p = figure(x_range=FactorRange(*x), plot_height=350, title="Fruit Counts by Year",
-               toolbar_location=None, tools="")
-
-    p.vbar(x='x', top='counts', width=0.9, source=source, line_color="white",
-           fill_color=factor_cmap('x', palette=palette, factors=years, start=1, end=2))
-
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 1
-    p.xgrid.grid_line_color = None
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def bar_stacked(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
-    years = ["2015", "2016", "2017"]
-    colors = ["#c9d9d3", "#718dbf", "#e84d60"]
-
-    data = {'fruits': fruits,
-            '2015': [2, 1, 4, 3, 2, 4],
-            '2016': [5, 3, 4, 2, 4, 6],
-            '2017': [3, 2, 4, 4, 5, 3]}
-
-    source = ColumnDataSource(data=data)
-
-    p = figure(x_range=fruits, plot_height=350, title="Fruit Counts by Year",
-               toolbar_location=None, tools="")
-
-    p.vbar_stack(years, x='fruits', width=0.9, color=colors, source=source,
-                 legend=[value(x) for x in years])
-
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xgrid.grid_line_color = None
-    p.axis.minor_tick_line_color = None
-    p.outline_line_color = None
-    p.legend.location = "top_left"
-    p.legend.orientation = "horizontal"
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def bar_nested(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
-    years = ['2015', '2016', '2017']
-
-    data = {'fruits': fruits,
-            '2015': [2, 1, 4, 3, 2, 4],
-            '2016': [5, 3, 3, 2, 4, 6],
-            '2017': [3, 2, 4, 4, 5, 3]}
-
-    # this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
-    x = [(fruit, year) for fruit in fruits for year in years]
-    counts = sum(zip(data['2015'], data['2016'], data['2017']), ())  # like an hstack
-
-    source = ColumnDataSource(data=dict(x=x, counts=counts))
-
-    p = figure(x_range=FactorRange(*x), plot_height=350, title="Fruit Counts by Year",
-               toolbar_location=None, tools="")
-
-    p.vbar(x='x', top='counts', width=0.9, source=source)
-
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 1
-    p.xgrid.grid_line_color = None
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
-               'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def bar_mixed(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    factors = [
-        ("Q1", "jan"), ("Q1", "feb"), ("Q1", "mar"),
-        ("Q2", "apr"), ("Q2", "may"), ("Q2", "jun"),
-        ("Q3", "jul"), ("Q3", "aug"), ("Q3", "sep"),
-        ("Q4", "oct"), ("Q4", "nov"), ("Q4", "dec"),
-
-    ]
-
-    p = figure(x_range=FactorRange(*factors), plot_height=350,
-               toolbar_location=None, tools="")
-
-    x = [10, 12, 16, 9, 10, 8, 12, 13, 14, 14, 12, 16]
-    p.vbar(x=factors, top=x, width=0.9, alpha=0.5)
-
-    p.line(x=["Q1", "Q2", "Q3", "Q4"], y=[12, 9, 13, 14], color="red", line_width=2)
-
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 1
-    p.xgrid.grid_line_color = None
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
-               'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def hide_glyph(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
-    p.title.text = 'Click on legend entries to hide the corresponding lines'
-
-    for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
-        df = pd.DataFrame(data)
-        df['date'] = pd.to_datetime(df['date'])
-        p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8, legend=name)
-
-    p.legend.location = "top_left"
-    p.legend.click_policy = "hide"
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
-               'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def mute_glyph(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
-    p.title.text = 'Click on legend entries to mute the corresponding lines'
-
-    for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
-        df = pd.DataFrame(data)
-        df['date'] = pd.to_datetime(df['date'])
-        p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8,
-               muted_color=color, muted_alpha=0.2, legend=name)
-
-    p.legend.location = "top_left"
-    p.legend.click_policy = "mute"
-
-    script, div = components(p)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
-               'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
-
-
-@login_required(login_url='/login/')
-def slider_widget(request):
-    is_loggedin = True if request.user.is_authenticated else False
-    is_admin = True if request.user.is_superuser else False
-    username = request.user.username
-
-    plot_available = False
-
-    x = [x * 0.005 for x in range(0, 200)]
-    y = x
-
-    source = ColumnDataSource(data=dict(x=x, y=y))
-
-    plot = figure(plot_width=400, plot_height=400)
-    plot.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
-
-    callback = CustomJS(args=dict(source=source), code="""
-        var data = source.data;
-        var f = cb_obj.value
-        x = data['x']
-        y = data['y']
-        for (i = 0; i < x.length; i++) {
-            y[i] = Math.pow(x[i], f)
-        }
-        source.change.emit();
-    """)
-
-    slider = Slider(start=0.1, end=4, value=1, step=.1, title="power")
-    slider.js_on_change('value', callback)
-
-    layout = column(slider, plot)
-    script, div = components(layout)
-
-    if div:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
-               'plot_available': plot_available,
-               'script': script, 'div': div}
-    return render(request, 'generic_chart.html', context)
+# @login_required(login_url='/login/')
+# def bar_colormapped(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+#     counts = [5, 3, 4, 2, 4, 6]
+#
+#     source = ColumnDataSource(data=dict(fruits=fruits, counts=counts))
+#
+#     p = figure(x_range=fruits, plot_height=350, toolbar_location=None, title="Fruit Counts")
+#     p.vbar(x='fruits', top='counts', width=0.9, source=source, legend="fruits",
+#            line_color='white', fill_color=factor_cmap('fruits', palette=Spectral6, factors=fruits))
+#
+#     p.xgrid.grid_line_color = None
+#     p.y_range.start = 0
+#     p.y_range.end = 9
+#     p.legend.orientation = "horizontal"
+#     p.legend.location = "top_center"
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def bar_nested_colormapped(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     colors = ["red", "orange", "yellow", "cyan", "magenta", "#e97cfd", "#c969cc", "#878dcf", "#ec4d70",
+#               "#a9d0d3", "#918cbf", "#e85d30"]
+#
+#     data = plot1_example().pivot_table(values='Claims', index='Month', columns='Dealer').fillna(0).reset_index()
+#
+#     columns = data.columns.tolist()
+#     columns.remove('Month')
+#
+#     source = ColumnDataSource(data)
+#
+#     p = figure(x_range=list(source.data['Month']), plot_width=1200, title="something")
+#
+#     for i in range(-2, len(columns) - 2):
+#         p.vbar(x=dodge('Month', i / (len(columns) + 1), range=p.x_range), top=columns[i], width=0.12, source=source,
+#                color=colors[i])
+#
+#     p.y_range.start = 0
+#     p.x_range.range_padding = 0.1
+#     p.xaxis.major_label_orientation = 1
+#     p.xgrid.grid_line_color = None
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def bar_stacked(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+#     years = ["2015", "2016", "2017"]
+#     colors = ["#c9d9d3", "#718dbf", "#e84d60"]
+#
+#     data = {'fruits': fruits,
+#             '2015': [2, 1, 4, 3, 2, 4],
+#             '2016': [5, 3, 4, 2, 4, 6],
+#             '2017': [3, 2, 4, 4, 5, 3]}
+#
+#     source = ColumnDataSource(data=data)
+#
+#     p = figure(x_range=fruits, plot_height=350, title="Fruit Counts by Year",
+#                toolbar_location=None, tools="")
+#
+#     p.vbar_stack(years, x='fruits', width=0.9, color=colors, source=source,
+#                  legend=[value(x) for x in years])
+#
+#     p.y_range.start = 0
+#     p.x_range.range_padding = 0.1
+#     p.xgrid.grid_line_color = None
+#     p.axis.minor_tick_line_color = None
+#     p.outline_line_color = None
+#     p.legend.location = "top_left"
+#     p.legend.orientation = "horizontal"
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def bar_nested(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+#     years = ['2015', '2016', '2017']
+#
+#     data = {'fruits': fruits,
+#             '2015': [2, 1, 4, 3, 2, 4],
+#             '2016': [5, 3, 3, 2, 4, 6],
+#             '2017': [3, 2, 4, 4, 5, 3]}
+#
+#     # this creates [ ("Apples", "2015"), ("Apples", "2016"), ("Apples", "2017"), ("Pears", "2015), ... ]
+#     x = [(fruit, year) for fruit in fruits for year in years]
+#     counts = sum(zip(data['2015'], data['2016'], data['2017']), ())  # like an hstack
+#
+#     source = ColumnDataSource(data=dict(x=x, counts=counts))
+#
+#     p = figure(x_range=FactorRange(*x), plot_height=350, title="Fruit Counts by Year",
+#                toolbar_location=None, tools="")
+#
+#     p.vbar(x='x', top='counts', width=0.9, source=source)
+#
+#     p.y_range.start = 0
+#     p.x_range.range_padding = 0.1
+#     p.xaxis.major_label_orientation = 1
+#     p.xgrid.grid_line_color = None
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+#                'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def bar_mixed(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     factors = [
+#         ("Q1", "jan"), ("Q1", "feb"), ("Q1", "mar"),
+#         ("Q2", "apr"), ("Q2", "may"), ("Q2", "jun"),
+#         ("Q3", "jul"), ("Q3", "aug"), ("Q3", "sep"),
+#         ("Q4", "oct"), ("Q4", "nov"), ("Q4", "dec"),
+#
+#     ]
+#
+#     p = figure(x_range=FactorRange(*factors), plot_height=350,
+#                toolbar_location=None, tools="")
+#
+#     x = [10, 12, 16, 9, 10, 8, 12, 13, 14, 14, 12, 16]
+#     p.vbar(x=factors, top=x, width=0.9, alpha=0.5)
+#
+#     p.line(x=["Q1", "Q2", "Q3", "Q4"], y=[12, 9, 13, 14], color="red", line_width=2)
+#
+#     p.y_range.start = 0
+#     p.x_range.range_padding = 0.1
+#     p.xaxis.major_label_orientation = 1
+#     p.xgrid.grid_line_color = None
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+#                'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def hide_glyph(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
+#     p.title.text = 'Click on legend entries to hide the corresponding lines'
+#
+#     for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
+#         df = pd.DataFrame(data)
+#         df['date'] = pd.to_datetime(df['date'])
+#         p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8, legend=name)
+#
+#     p.legend.location = "top_left"
+#     p.legend.click_policy = "hide"
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+#                'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def mute_glyph(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     p = figure(plot_width=800, plot_height=250, x_axis_type="datetime")
+#     p.title.text = 'Click on legend entries to mute the corresponding lines'
+#
+#     for data, name, color in zip([AAPL, IBM, MSFT, GOOG], ["AAPL", "IBM", "MSFT", "GOOG"], Spectral4):
+#         df = pd.DataFrame(data)
+#         df['date'] = pd.to_datetime(df['date'])
+#         p.line(df['date'], df['close'], line_width=2, color=color, alpha=0.8,
+#                muted_color=color, muted_alpha=0.2, legend=name)
+#
+#     p.legend.location = "top_left"
+#     p.legend.click_policy = "mute"
+#
+#     script, div = components(p)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+#                'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
+#
+#
+# @login_required(login_url='/login/')
+# def slider_widget(request):
+#     is_loggedin = True if request.user.is_authenticated else False
+#     is_admin = True if request.user.is_superuser else False
+#     username = request.user.username
+#
+#     plot_available = False
+#
+#     x = [x * 0.005 for x in range(0, 200)]
+#     y = x
+#
+#     source = ColumnDataSource(data=dict(x=x, y=y))
+#
+#     plot = figure(plot_width=400, plot_height=400)
+#     plot.line('x', 'y', source=source, line_width=3, line_alpha=0.6)
+#
+#     callback = CustomJS(args=dict(source=source), code="""
+#         var data = source.data;
+#         var f = cb_obj.value
+#         x = data['x']
+#         y = data['y']
+#         for (i = 0; i < x.length; i++) {
+#             y[i] = Math.pow(x[i], f)
+#         }
+#         source.change.emit();
+#     """)
+#
+#     slider = Slider(start=0.1, end=4, value=1, step=.1, title="power")
+#     slider.js_on_change('value', callback)
+#
+#     layout = column(slider, plot)
+#     script, div = components(layout)
+#
+#     if div:
+#         plot_available = True
+#
+#     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username,
+#                'plot_available': plot_available,
+#                'script': script, 'div': div}
+#     return render(request, 'generic_chart.html', context)
