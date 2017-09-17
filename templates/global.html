@@ -26,6 +26,8 @@
     {% if plot_available %}
     <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i
         class="glyphicon glyphicon-remove"></i> Clear All</a>
+    <a href="#" class="btn btn-raised btn-default" id="btnSaveAll"><i
+        class="glyphicon glyphicon-save"></i> Save Canvas</a>
     {% endif %}
     <!-- Modal -->
     <div id="myModal" class="modal fade" role="dialog">
@@ -175,9 +177,9 @@
             <div class="col-md-10">
                 {{ div|safe }}
             </div>
-            <div class="col-md-2">
-                <input type="text" id="eng_{{ div|get_plot_id }}" />
-            </div>
+{#            <div class="col-md-2">#}
+{#                <input type="text" id="eng_{{ div|get_plot_id }}" />#}
+{#            </div>#}
             {% endfor %}
 
         {% endif %}

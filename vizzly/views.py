@@ -13,10 +13,25 @@ from bokeh.embed import components
 from bokeh.palettes import viridis
 
 import numpy as np
+from django.utils.text import slugify
 from scipy.stats import gaussian_kde
 
 from .load_data import *
 from .utils import *
+
+from core.models import SavedPlot
+
+
+@login_required(login_url='/login/')
+def save_session(request):
+    user = request.user
+    plots = request.session['json_in_session']
+    name = request.POST.get('canvas_name')
+    slug = slugify(name)
+
+    p = SavedPlot.objects.create(name=name, slug=slug, user=user, plots=plots)
+
+    return render(request, 'view_plot.html', {'plot': p})
 
 
 @login_required(login_url='/login/')
@@ -106,9 +121,6 @@ def view_global_ewt(request):
     username = request.user.username
     plot_available = False
 
-    def update():
-        print("YOYO")
-
     div = script = ''
     plots = list()
     json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
@@ -176,15 +188,10 @@ def view_global_ewt(request):
             miles = TextInput(title="MILES")
 
             controls = [eng, tran, miles]
-            for control in controls:
-                control.on_change('value', lambda attr, old, new: update())
 
             sizing_mode = 'fixed'
 
-            l = layout([
-                [eng, tran, miles],
-                [p],
-            ], sizing_mode=sizing_mode)
+            l = layout([controls, [p]], sizing_mode=sizing_mode)
 
             plots.append(l)
 
