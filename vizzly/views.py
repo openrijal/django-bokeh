@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from bokeh.layouts import layout
-from bokeh.models import ColumnDataSource, FactorRange, TextInput
+from bokeh.models import ColumnDataSource, FactorRange, TextInput, HoverTool
 from bokeh.transform import factor_cmap
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -138,6 +138,8 @@ def view_global_ewt(request):
             sql_data = json_to_sql(jd)
             data = get_dataframe(sql_data)
 
+            labels = get_plot_labels(jd)
+
             columns = data.columns.tolist()
             columns.remove('x')
 
@@ -149,8 +151,13 @@ def view_global_ewt(request):
 
             source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
 
+            hover = HoverTool(tooltips=[
+                (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+                (labels.y_label, "@y_axis_data"),
+            ])
+
             p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-                       title="Chart with Zip implementation")
+                       title=labels.title, tools=[hover, 'pan', 'box_zoom'])
 
             p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
                    fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
@@ -160,6 +167,9 @@ def view_global_ewt(request):
             p.x_range.range_padding = 0.1
             p.xaxis.major_label_orientation = 1
             p.xgrid.grid_line_color = None
+            p.xaxis.axis_label = labels.x_label
+            p.yaxis.axis_label = labels.y_label
+            p.title.align = 'center'
 
             eng = TextInput(title="ENG")
             tran = TextInput(title="TRAN")

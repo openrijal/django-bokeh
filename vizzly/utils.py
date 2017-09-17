@@ -1,4 +1,5 @@
 import json
+import collections
 import pandas as pd
 
 
@@ -40,3 +41,24 @@ def json_to_sql(json_data):
         ewt_date_convert(time_scale), compare_parameter, aggregation_method, aggregation_parameter, where_clause)
 
     return query
+
+
+def get_plot_labels(json_data):
+    query_params = json.loads(json_data)
+    time_adj_maps = {'DAY': 'Daily', 'MONTH': 'Monthly', 'QUARTER': 'Quarterly'}
+    time_adj = time_adj_maps[query_params.get('plot_parameters').get('time_scale')]
+
+    if query_params.get('plot_parameters').get('aggregation_method') == 'COUNT':
+        aggr_str = 'Count'
+    else:
+        aggr_str = 'Sum of {0}'.format(query_params.get('plot_parameters').get('aggregation_parameter'))
+    plot_title = '{0} {1} by {2}'.format(time_adj, aggr_str,
+                                         query_params.get('plot_parameters').get('compare_parameter'))
+
+    x_label = '{0}/{1}'.format(query_params.get('plot_parameters').get('compare_parameter'),
+                               query_params.get('plot_parameters').get('time_scale').capitalize())
+    y_label = aggr_str
+
+    PlotLabels = collections.namedtuple("PlotLabels", "title x_label y_label")
+
+    return PlotLabels(title=plot_title, x_label=x_label, y_label=y_label)
