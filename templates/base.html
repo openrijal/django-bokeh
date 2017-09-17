@@ -1,96 +1,100 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>{% block title %}Welcome{% endblock %}</title>
 
-    <!-- Material Design fonts -->
-   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
-   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-   <!-- Bootstrap -->
-   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-
-   <!-- Bootstrap Material Design -->
-   <link href="/static/css/bootstrap-material-design.min.css" rel="stylesheet">
-   <link href="/static/css/ripples.min.css" rel="stylesheet">
-   <link href="/static/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bokeh Specific -->
-    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.css" type="text/css" />
+    <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.css" type="text/css"/>
 
-   <!-- custom css -->
-   <link href="/static/css/style.css" rel="stylesheet">
-   <link href="/static/css/submenu.css" rel="stylesheet">
+    <!-- custom css -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/submenu.css" rel="stylesheet">
+    <link href="/static/css/navbar.css" rel="stylesheet">
+    <style>.bk-root .bk-ui-widget-content {
+        background-image: none !important;
+        background-color: #ff9900 !important;
+    }
 
-   <link rel="shortcut icon" href="/static/favicon.ico">
+    .bk-root .bk-ui-slider-vertical .bk-ui-slider-handle {
+        left: -0.24em !important;
+        margin-left: 0;
+        margin-bottom: -0.6em;
+    }
 
-  </head>
-  <body>
-    <div class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="javascript:void(0)">Bokeh Plots</a>
-        </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li>
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <span class="glyphicon glyphicon-menu-hamburger"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="/single/">Single Case Warranty Analysis</a></li>
-                <li><a href="/global/">Global Warranty Analysis</a></li>
-                <!-- <li class="dropdown-submenu">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Global Warranty Analysis</a>
-                  <ul class="dropdown-menu">
-                    <li><a href="/sub1/">Subplot 1</a></li>
-                    <li><a href="/sub2/">Subplot 2</a></li>
-                  </ul>
-                </li> -->
-              </ul>
-            </li>
-          </ul>
-          {% block actions %}
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #7f7f7f;
+        background-color: #fff;
+    }
 
-          {% endblock %}
-        </div>
-      </div>
-    </div>
 
-    <div class="container">
-      <div class="col-md-10">
+    </style>
+    <link rel="shortcut icon" href="/static/favicon.ico">
+
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-default">
+        <nav class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://www.hrforecast.de/" target="_blank">
+                    <img alt="HRForecast" src="/static/img/HRForecast_Logo.svg">
+                </a>
+            </div>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            <span class="glyphicon glyphicon-menu-hamburger"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/single/">Single Case Warranty Analysis</a></li>
+                            <li><a href="/global/">Global Warranty Analysis</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% block actions %}
+
+                {% endblock %}
+
+                <div class="navbar-header navbar-right">
+                    <a class="navbar-brand" href="https://www.continental-corporation.com/en" target="_blank">
+                        <img alt="Continental" src="/static/img/Continental-Logo.svg">
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </nav>
+</div>
+
+<div class="container">
+    <div class="col-md-10">
         {% block content %}
 
 
         {% endblock %}
-      </div>
-
     </div>
 
-  </body>
+</div>
 
-  <script src="/static/js/jquery.min.js"></script>
-  <script src="/static/js/bootstrap.min.js"></script>
-  <script src="/static/js/ripples.min.js"></script>
-  <script src="/static/js/material.min.js"></script>
-  <script src="/static/js/jquery.dataTables.min.js"></script>
-  <script src="/static/js/dataTables.bootstrap.min.js"></script>
-  <script>
-  $(function () {
-    $.material.init();
-  });
-</script>
+</body>
 
-  <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/global_scripts.js"></script>
+
+<script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.12.9.min.js"></script>
 
 {% block extras %}
 {% endblock %}

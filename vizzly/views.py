@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bokeh.models import ColumnDataSource, FactorRange
+from bokeh.models import ColumnDataSource, FactorRange, Range1d
 from bokeh.transform import factor_cmap
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -15,7 +15,7 @@ import numpy as np
 from scipy.stats import gaussian_kde
 
 from .load_data import *
-from .utils import columnsToDate
+from .utils import *
 
 
 @login_required(login_url='/login/')
@@ -80,46 +80,70 @@ def view_single(request):
     return render(request, 'single.html', context)
 
 
-@login_required(login_url='/login/')
 def view_global(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
     plot_available = False
 
-    data = plot1_example().pivot_table(values='Claims', index='Month', columns='Dealer').fillna(0).reset_index()
+    div = script = ''
 
-    columns = data.columns.tolist()
-    columns.remove('Month')
+    if request.POST:
+        json_data = request.POST
 
-    x_axis_data = [(month, dealer) for month in data['Month'] for dealer in columns]
+        graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
+        compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
+        agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
+        agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
 
-    to_zip = [data[c].tolist() for c in columns]
+        json_data = '''
+            {
+                "plot_parameters":{
+                    "time_scale": "%s",
+                    "compare_parameter": "%s",
+                    "aggregation_method": "%s",
+                    "aggregation_parameter": "%s",
+                    "filters":[]
+                }
+            }
+        ''' % ('MONTH', compare_param, agg_method, agg_param)
 
-    y_axis_data = sum(zip(*to_zip), ())
+        print(json_data)
 
-    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+        sql_data = json_to_sql(json_data)
+        data = get_dataframe(sql_data)
 
-    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-               title="Chart with Zip implementation", toolbar_location=None, tools="")
+        columns = data.columns.tolist()
+        columns.remove('x')
 
-    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
-           fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1, end=2))
+        x_axis_data = [(x, z) for x in data['x'] for z in columns]
 
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 1
-    p.xgrid.grid_line_color = None
+        to_zip = [data[c].tolist() for c in columns]
 
-    script, div = components(p)
+        y_axis_data = sum(zip(*to_zip), ())
 
-    if div:
-        plot_available = True
+        source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+
+        p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
+                   title="Chart with Zip implementation")
+
+        p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+               fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                      end=len(columns)))
+
+        p.y_range.start = 0
+        p.x_range.range_padding = 0.1
+        p.xaxis.major_label_orientation = 1
+        p.xgrid.grid_line_color = None
+
+        script, div = components(p)
+
+        if div:
+            plot_available = True
 
     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
                'script': script, 'div': div}
     return render(request, 'global.html', context)
-
 
 # @login_required(login_url='/login/')
 # def bar_colormapped(request):

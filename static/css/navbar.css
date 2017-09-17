@@ -1,0 +1,45 @@
+.clear {
+  width: 8%;
+  display: table-cell;
+  padding-left: 3px;
+  vertical-align: middle; }
+  .clear a:hover { text-decoration: none; 
+  }
+
+  .form-btn, .form-btn:hover {
+    background-color: #ff9900;
+
+  }
+
+  .btn-group > .btn,
+  .btn-group-vertical > .btn {
+    position: fixed;
+  }
+
+  .white, .white a {
+    color: #fff;
+  }
+
+  .nav-btn, .nav-btn a {
+    background-color: #fff;
+    border-color: #fff;
+  }
+
+
+  .container {
+    width: -webkit-fill-available;
+  }
+
+  .navbar img {
+    height: 170%;
+  }
+
+  .navbar-brand {
+    padding-top: 15px;
+    padding-bottom: 22px;
+  }
+
+
+  .center-form {
+    text-align: center;
+  }
