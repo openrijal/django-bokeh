@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block content %}
+    <div class="col-md-12">
     <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#myModal"><i
             class="glyphicon glyphicon-plus"></i> Add Plot</a>
 
@@ -159,13 +160,19 @@
     </div>
 
     </div>
-
+    </div>
     {% if plot_available %}
-{#        {% for div in divs %}#}
-        <div class="col-md-6">
+        {% if div %}
             {{ div|safe }}
-        </div>
-{#        {% endfor %}#}
+
+        {% elif divs %}
+            {% for div in divs %}
+            <div class="col-md-6">
+                {{ div|safe }}
+            </div>
+            {% endfor %}
+
+        {% endif %}
     {% endif %}
 {% endblock %}
 

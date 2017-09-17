@@ -122,6 +122,5 @@ def plot1_example():
 def get_dataframe(raw_sql):
     connection = engine.connect()
     res = pd.read_sql(raw_sql.replace('%', '%%'), connection)
-    print(raw_sql)
     connection.close()
     return res.pivot_table(values='y', index='x', columns='z').fillna(0).reset_index()

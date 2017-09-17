@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from base64 import b64encode, b64decode
+
 from bokeh.models import ColumnDataSource, FactorRange, Range1d
 from bokeh.transform import factor_cmap
 from django.shortcuts import render
@@ -16,6 +18,24 @@ from scipy.stats import gaussian_kde
 
 from .load_data import *
 from .utils import *
+
+
+@login_required(login_url='/login/')
+def clear_session(request):
+    is_loggedin = True if request.user.is_authenticated else False
+    is_admin = True if request.user.is_superuser else False
+    username = request.user.username
+
+    plot_available = False
+
+    clear_bool = bool(request.POST.get('clear_all')) if 'clear_all' in request.POST else 0
+
+    if clear_bool:
+        request.session['json_in_session'] = ''
+
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
+               'div': '', 'script': ''}
+    return render(request, 'global.html', context)
 
 
 @login_required(login_url='/login/')
@@ -80,6 +100,7 @@ def view_single(request):
     return render(request, 'single.html', context)
 
 
+@login_required()
 def view_global_ewt(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
@@ -87,10 +108,10 @@ def view_global_ewt(request):
     plot_available = False
 
     div = script = ''
+    plots = list()
+    json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
 
     if request.POST:
-        json_data = request.POST
-
         graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
         compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
         agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
@@ -108,41 +129,45 @@ def view_global_ewt(request):
             }
         ''' % ('MONTH', compare_param, agg_method, agg_param)
 
-        print(json_data)
+        json_array.append(json_data)
+        request.session['json_in_session'] = json_array
 
-        sql_data = json_to_sql(json_data)
-        data = get_dataframe(sql_data)
+        for jd in json_array:
+            sql_data = json_to_sql(jd)
+            data = get_dataframe(sql_data)
 
-        columns = data.columns.tolist()
-        columns.remove('x')
+            columns = data.columns.tolist()
+            columns.remove('x')
 
-        x_axis_data = [(x, z) for x in data['x'] for z in columns]
+            x_axis_data = [(x, z) for x in data['x'] for z in columns]
 
-        to_zip = [data[c].tolist() for c in columns]
+            to_zip = [data[c].tolist() for c in columns]
 
-        y_axis_data = sum(zip(*to_zip), ())
+            y_axis_data = sum(zip(*to_zip), ())
 
-        source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+            source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
 
-        p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-                   title="Chart with Zip implementation")
+            p = figure(x_range=FactorRange(*x_axis_data), plot_width=400, plot_height=400,
+                       title="Chart with Zip implementation")
 
-        p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
-               fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
-                                      end=len(columns)))
+            p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+                   fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                          end=len(columns)))
 
-        p.y_range.start = 0
-        p.x_range.range_padding = 0.1
-        p.xaxis.major_label_orientation = 1
-        p.xgrid.grid_line_color = None
+            p.y_range.start = 0
+            p.x_range.range_padding = 0.1
+            p.xaxis.major_label_orientation = 1
+            p.xgrid.grid_line_color = None
 
-        script, div = components(p)
+            plots.append(p)
 
-        if div:
-            plot_available = True
+    script, divs = components(tuple(plots))
+
+    if divs:
+        plot_available = True
 
     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
-               'script': script, 'div': div}
+               'script': script, 'divs': divs}
     return render(request, 'global.html', context)
 
 # @login_required(login_url='/login/')
