@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from bokeh.layouts import layout
-from bokeh.models import ColumnDataSource, FactorRange, TextInput, HoverTool
-from bokeh.transform import factor_cmap
+
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import components
-from bokeh.palettes import viridis
 
 import numpy as np
 from django.utils.text import slugify
 from scipy.stats import gaussian_kde
 
-from .load_data import *
 from .utils import *
 
 from core.models import SavedPlot
@@ -25,7 +20,7 @@ from core.models import SavedPlot
 @login_required(login_url='/login/')
 def save_session(request):
     user = request.user
-    plots = request.session['json_in_session']
+    plots = '<;;>'.join(list(request.session.get('json_in_session')))
     name = request.GET.get('canvas_name')
     slug = slugify(name)
 
@@ -125,75 +120,33 @@ def view_global_ewt(request):
     plots = list()
     json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
 
-    if request.POST:
-        graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
-        compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
-        agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
-        agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
+    print(json_array)
 
-        json_data = '''
-            {
-                "plot_parameters":{
-                    "time_scale": "%s",
-                    "compare_parameter": "%s",
-                    "aggregation_method": "%s",
-                    "aggregation_parameter": "%s",
-                    "filters":[]
+    if json_array:
+        if request.POST:
+            graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
+            compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
+            agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
+            agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
+
+            json_data = '''
+                {
+                    "plot_parameters":{
+                        "time_scale": "%s",
+                        "compare_parameter": "%s",
+                        "aggregation_method": "%s",
+                        "aggregation_parameter": "%s",
+                        "filters":[]
+                    }
                 }
-            }
-        ''' % ('MONTH', compare_param, agg_method, agg_param)
+            ''' % ('MONTH', compare_param, agg_method, agg_param)
 
-        json_array.append(json_data)
-        request.session['json_in_session'] = json_array
+            json_array.append(json_data)
+            request.session['json_in_session'] = json_array
 
         for jd in json_array:
-            sql_data = json_to_sql(jd)
-            data = get_dataframe(sql_data)
-
-            labels = get_plot_labels(jd)
-
-            columns = data.columns.tolist()
-            columns.remove('x')
-
-            x_axis_data = [(x, z) for x in data['x'] for z in columns]
-
-            to_zip = [data[c].tolist() for c in columns]
-
-            y_axis_data = sum(zip(*to_zip), ())
-
-            source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
-
-            hover = HoverTool(tooltips=[
-                (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
-                (labels.y_label, "@y_axis_data"),
-            ])
-
-            p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-                       title=labels.title, tools=[hover, 'pan', 'box_zoom'])
-
-            p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
-                   fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
-                                          end=len(columns)))
-
-            p.y_range.start = 0
-            p.x_range.range_padding = 0.1
-            p.xaxis.major_label_orientation = 1
-            p.xgrid.grid_line_color = None
-            p.xaxis.axis_label = labels.x_label
-            p.yaxis.axis_label = labels.y_label
-            p.title.align = 'center'
-
-            eng = TextInput(title="ENG")
-            tran = TextInput(title="TRAN")
-            miles = TextInput(title="MILES")
-
-            controls = [eng, tran, miles]
-
-            sizing_mode = 'fixed'
-
-            l = layout([controls, [p]], sizing_mode=sizing_mode)
-
-            plots.append(l)
+            ly = get_layout(jd)
+            plots.append(ly)
 
     script, divs = components(tuple(plots))
 

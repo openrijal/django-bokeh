@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load manipulators %}
-
 {% block title %}Welcome, {{ username }}{% endblock %}
 
 {% block actions %}
@@ -21,12 +19,12 @@
 
 {% block content %}
     <ul>
-    {% if plots %}
-        {% for plot in plots %}
-        <li><a href="/view/{{ plot.slug }}"></a>{{ plot.name }}</li>
+    {% if divs %}
+        {% for div in divs %}
+            {{ div|safe }}
         {% endfor %}
     {% else %}
-        <p>No Saved Plots</p>
+        <p>Nothings seems to be available here.</p>
     {% endif %}
     </ul>
 {% endblock %}

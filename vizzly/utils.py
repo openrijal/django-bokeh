@@ -1,6 +1,13 @@
 import json
 import collections
-import pandas as pd
+
+from bokeh.layouts import layout
+from bokeh.models import ColumnDataSource, FactorRange, TextInput, HoverTool
+from bokeh.transform import factor_cmap
+from bokeh.palettes import viridis
+from bokeh.plotting import figure
+
+from .load_data import *
 
 
 def columnsToDate(df, column_dic, date_format):
@@ -62,3 +69,53 @@ def get_plot_labels(json_data):
     PlotLabels = collections.namedtuple("PlotLabels", "title x_label y_label")
 
     return PlotLabels(title=plot_title, x_label=x_label, y_label=y_label)
+
+
+def get_layout(json_data):
+    sql_data = json_to_sql(json_data)
+    data = get_dataframe(sql_data)
+
+    labels = get_plot_labels(json_data)
+
+    columns = data.columns.tolist()
+    columns.remove('x')
+
+    x_axis_data = [(x, z) for x in data['x'] for z in columns]
+
+    to_zip = [data[c].tolist() for c in columns]
+
+    y_axis_data = sum(zip(*to_zip), ())
+
+    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+
+    hover = HoverTool(tooltips=[
+        (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+        (labels.y_label, "@y_axis_data"),
+    ])
+
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
+               title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+
+    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+           fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                  end=len(columns)))
+
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.xaxis.axis_label = labels.x_label
+    p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+
+    eng = TextInput(title="ENG")
+    tran = TextInput(title="TRAN")
+    miles = TextInput(title="MILES")
+
+    controls = [eng, tran, miles]
+
+    sizing_mode = 'fixed'
+
+    ly = layout([controls, [p]], sizing_mode=sizing_mode)
+
+    return ly
