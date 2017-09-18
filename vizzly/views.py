@@ -26,7 +26,7 @@ from core.models import SavedPlot
 def save_session(request):
     user = request.user
     plots = request.session['json_in_session']
-    name = request.POST.get('canvas_name')
+    name = request.GET.get('canvas_name')
     slug = slugify(name)
 
     p = SavedPlot.objects.create(name=name, slug=slug, user=user, plots=plots)
