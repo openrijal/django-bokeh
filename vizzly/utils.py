@@ -94,7 +94,7 @@ def get_layout(json_data):
     ])
 
     p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,
-               title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+               title=labels.title, tools=[hover, 'pan', 'box_zoom', 'wheel_zoom', 'save', 'reset'])
 
     p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
            fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
