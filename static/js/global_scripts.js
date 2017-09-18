@@ -24,7 +24,7 @@ $('#btnSaveAll').on('click', function(){
         url: "/save_session/",
         method: 'GET', // or another (GET), whatever you need
         data: {
-            "name": "untitled-"+some_random // data you need to pass to your function
+            "canvas_name": "untitled-"+some_random // data you need to pass to your function
         },
         success: function (data) {
             console.log("Saved !!");
