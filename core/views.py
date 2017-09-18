@@ -9,7 +9,7 @@ from bokeh.embed import components
 @login_required(login_url='/login/')
 def view_list_plots(request):
     user = request.user
-    plots = SavedPlot.objects.filter(user=user)
+    plots = SavedPlot.objects.filter(user=user).order_by('-created_on')
     return render(request, 'saved_plots.html', {'plots': plots, 'username': request.user.username})
 
 
