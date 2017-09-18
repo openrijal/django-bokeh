@@ -120,29 +120,26 @@ def view_global_ewt(request):
     plots = list()
     json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
 
-    print(json_array)
+    if request.POST:
+        graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
+        compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
+        agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
+        agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
 
-    if json_array:
-        if request.POST:
-            graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
-            compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
-            agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
-            agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
-
-            json_data = '''
-                {
-                    "plot_parameters":{
-                        "time_scale": "%s",
-                        "compare_parameter": "%s",
-                        "aggregation_method": "%s",
-                        "aggregation_parameter": "%s",
-                        "filters":[]
-                    }
+        json_data = '''
+            {
+                "plot_parameters":{
+                    "time_scale": "%s",
+                    "compare_parameter": "%s",
+                    "aggregation_method": "%s",
+                    "aggregation_parameter": "%s",
+                    "filters":[]
                 }
-            ''' % ('MONTH', compare_param, agg_method, agg_param)
+            }
+        ''' % ('MONTH', compare_param, agg_method, agg_param)
 
-            json_array.append(json_data)
-            request.session['json_in_session'] = json_array
+        json_array.append(json_data)
+        request.session['json_in_session'] = json_array
 
         for jd in json_array:
             ly = get_layout(jd)
