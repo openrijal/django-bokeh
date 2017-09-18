@@ -23,7 +23,7 @@
     <ul>
     {% if plots %}
         {% for plot in plots %}
-        <li><a href="/view/{{ plot.slug }}"></a>{{ plot.name }}</li>
+        <li><a href="/view_plot/{{ plot.slug }}">{{ plot.name }}</a></li>
         {% endfor %}
     {% else %}
         <p>No Saved Plots</p>
