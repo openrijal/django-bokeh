@@ -10,7 +10,7 @@ from bokeh.embed import components
 def view_list_plots(request):
     user = request.user
     plots = SavedPlot.objects.filter(user=user)
-    return render(request, 'saved_plots.html', {'plots': plots})
+    return render(request, 'saved_plots.html', {'plots': plots, 'username': request.user.username})
 
 
 @login_required(login_url='/login/')
@@ -25,5 +25,5 @@ def view_saved_plots(request, slug):
 
     script, divs = components(tuple(plot_list))
 
-    return render(request, 'view_plot.html', {'divs': divs, 'script': script})
+    return render(request, 'view_plot.html', {'divs': divs, 'script': script, 'username': request.user.username})
 
