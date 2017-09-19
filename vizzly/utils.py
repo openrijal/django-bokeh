@@ -1,8 +1,7 @@
 import json
 import collections
 
-from bokeh.layouts import layout
-from bokeh.models import ColumnDataSource, FactorRange, TextInput, HoverTool
+from bokeh.models import ColumnDataSource, FactorRange, HoverTool
 from bokeh.transform import factor_cmap
 from bokeh.palettes import viridis
 from bokeh.plotting import figure
@@ -108,14 +107,15 @@ def get_layout(json_data):
     p.yaxis.axis_label = labels.y_label
     p.title.align = 'center'
 
-    eng = TextInput(title="ENG")
-    tran = TextInput(title="TRAN")
-    miles = TextInput(title="MILES")
+    # eng = TextInput(title="ENG")
+    # tran = TextInput(title="TRAN")
+    # miles = TextInput(title="MILES")
+    #
+    # controls = [eng, tran, miles]
+    #
+    # sizing_mode = 'fixed'
+    #
+    # ly = layout([controls, [p]], sizing_mode=sizing_mode)
 
-    controls = [eng, tran, miles]
-
-    sizing_mode = 'fixed'
-
-    ly = layout([controls, [p]], sizing_mode=sizing_mode)
-
-    return ly
+    # return ly
+    return p
