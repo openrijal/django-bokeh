@@ -116,12 +116,10 @@ def view_global_ewt(request):
     username = request.user.username
     plot_available = False
 
-    div = script = ''
     plots = list()
     json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
 
     if request.POST:
-        graph_title = request.POST.get('frmTitleEWT') if 'frmTitleEWT' in request.POST else ''
         compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
         agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
         agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
