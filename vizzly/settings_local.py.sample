@@ -1,0 +1,39 @@
+from .settings import *
+
+SECRET_KEY = 'zf*^_ae-+$i^=+l05sbasdarcxjd97rf!+d=o7i+-eo9+)i92g'
+
+DEBUG = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static')
+STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
+MEDIA_URL = '/media/'
+
+INSTALLED_APPS += (
+    # 'debug_toolbar',
+)
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'dbname',
+#         'USER': 'dbuser',
+#         'PASSWORD': 'dbpass',
+#         'HOST': '',
+#         'PORT': '',
+#         'ATOMIC_REQUESTS': True,
+#     }
+# }
+
+DB_NAME = 'fca'
+DB_USER = 'root'
+DB_PASS = ''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3',
+    }
+}
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
