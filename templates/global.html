@@ -176,19 +176,20 @@
         {% for div in divs %}
             <div class="col-md-12">
                 <form class="form-inline">
+                    <input type="hidden" name="graph_uuid" value="{{ div|get_plot_id }}" />
                     <div class="form-group col-md-2">
                         <label for="eng_{{ div|get_plot_id }}">ENG</label>
-                        <input type="text" class="form-control input-sm" id="eng_{{ div|get_plot_id }}"
+                        <input type="text" class="form-control input-sm"
                                placeholder="something..."/>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="tran_{{ div|get_plot_id }}">TRAN</label>
-                        <input type="text" class="form-control input-sm" id="tran_{{ div|get_plot_id }}"
+                        <input type="text" class="form-control input-sm"
                                placeholder="something..."/>
                     </div>
                     <div class="form-group col-md-2">
                         <label for="miles_{{ div|get_plot_id }}">MILES</label>
-                        <input type="text" class="form-control input-sm" id="miles_{{ div|get_plot_id }}"
+                        <input type="text" class="form-control input-sm"
                                placeholder="something..."/>
                     </div>
                     <div class="form-group col-md-4">
@@ -200,7 +201,7 @@
                         </div>
                     </div>
                     <div class="form-group col-md-2">
-                        <button type="submit" class="btn btn-primary" id="filter_{{ div|get_plot_id }}">Execute</button>
+                        <button type="submit" class="btn btn-primary">Execute</button>
                     </div>
                 </form>
             </div>
