@@ -23,8 +23,10 @@
                             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-tables.min.js"></script>
                             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-gl.min.js"></script>
                             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-                                        {{ plot_script | safe }}
 
+                            <div id="script1">
+                                        {{ plot_script | safe }}
+                             </div>
                             <script type="text/javascript">
                             
 $("#btnmonth").click(function(){
@@ -46,8 +48,16 @@ $("#btnmonth").click(function(){
                             myDiv.id = "plot1";
                             parent_p1.appendChild(myDiv);
 
+                            s1 = document.getElementById("script1");
+                            parent_s1 = s1.parentNode
+                            parent_p1.removeChild(s1);
+
+                            var myDiv = document.createElement("div");
+                            myDiv.id = "script1";
+                            parent_s1.appendChild(myDiv);
+
                             $('#plot1').html(response.div);
-                            $("head").append(response.script);
+                            $("#script1").append(response.script);
                           },
                       error: function(xhr) {
                               //Do Something to handle error
@@ -76,8 +86,16 @@ $("#btnday").click(function(){
                             parent_p1.appendChild(myDiv);
 
 
+                            s1 = document.getElementById("script1");
+                            parent_s1 = s1.parentNode
+                            parent_p1.removeChild(s1);
+
+                            var myDiv = document.createElement("div");
+                            myDiv.id = "script1";
+                            parent_s1.appendChild(myDiv);
+
                             $('#plot1').html(response.div);
-                            $("head").append(response.script);
+                            $("#script1").append(response.script);
                             //Bokeh.documents[0].replace_with_json(response.div)
                           },
                       error: function(xhr) {
