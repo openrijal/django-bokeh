@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+      <head>
+              <title>Bokeh Scatter Plots</title>
+                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh.min.css" type="text/css" />
+                      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-widgets.min.css" type="text/css" />
+                          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-tables.min.css" type="text/css" />
+                           </head>
+                            <body>
+                                             
+                                             <h1>Bokeh Demo</h1>
+                                             <button id="btnmonth" type="button" value="MONTH">Monthly</button>
+                                             <button id="btnday" type="button" value="DAY">Daily</button>
+                                             <div id="plot1">
+                                                 {{ plot_div | safe }}
+                                              </div>
+                            </body>
+
+
+
+                            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh.min.js"></script>
+                            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-widgets.min.js"></script>
+                            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-tables.min.js"></script>
+                            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bokeh/0.12.9/bokeh-gl.min.js"></script>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+                                        {{ plot_script | safe }}
+
+                            <script type="text/javascript">
+                            
+$("#btnmonth").click(function(){
+      // action goes here!!
+        $.ajax({
+              url: "/update_figure/",
+                type: "get", //send it through get method
+                  data: { 
+                          time_scale: "MONTH" 
+                         },
+                    success: function(response) {
+                            //Do Something
+
+                            plot1 = document.getElementById("plot1");
+                            parent_p1 = plot1.parentNode
+                            parent_p1.removeChild(plot1);
+
+                            var myDiv = document.createElement("div");
+                            myDiv.id = "plot1";
+                            parent_p1.appendChild(myDiv);
+
+                            $('#plot1').html(response.div);
+                            $("head").append(response.script);
+                          },
+                      error: function(xhr) {
+                              //Do Something to handle error
+                            }
+        });
+});
+                            
+
+$("#btnday").click(function(){
+      // action goes here!!
+        $.ajax({
+              url: "/update_figure/",
+                type: "get", //send it through get method
+                  data: { 
+                          time_scale: "DAY" 
+                         },
+                    success: function(response) {
+                            //Do Something
+
+                            plot1 = document.getElementById("plot1");
+                            parent_p1 = plot1.parentNode
+                            parent_p1.removeChild(plot1);
+
+                            var myDiv = document.createElement("div");
+                            myDiv.id = "plot1";
+                            parent_p1.appendChild(myDiv);
+
+
+                            $('#plot1').html(response.div);
+                            $("head").append(response.script);
+                            //Bokeh.documents[0].replace_with_json(response.div)
+                          },
+                      error: function(xhr) {
+                              //Do Something to handle error
+                            }
+        });
+});
+                            </script>
+
+
+</html>

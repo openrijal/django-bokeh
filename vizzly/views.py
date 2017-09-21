@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from bokeh.resources import CDN
 from bokeh.embed import components
@@ -15,7 +16,87 @@ from scipy.stats import gaussian_kde
 from .utils import *
 
 from core.models import SavedPlot
+        
+    
+def get_filter_json(filter_obj):
+    filter_param= filter_obj.title
+    filter_value = filter_obj.value.strip()
+    if len(filter_value) <= 0:
+        print('Return none for filter')
+        return None
 
+    res = '''
+        {"parameter":"%s","operator":"=","value":"%s","type":"string"}
+        ''' % (filter_param, filter_value)
+    print('Returning json for filter: {0}'.format(res))
+    return res
+
+
+def create_figure(time_scale):
+
+    #i_compare_param = compare_param.value
+    #i_agg_method = agg_func.labels[agg_func.active]
+    #i_time_scale = time_scale.labels[time_scale.active]
+    #filters = [eng, trans, vin8]
+    i_compare_param = "RPR-DLR"
+    i_agg_method = "COUNT"
+    i_time_scale = time_scale
+    #filters = [eng, trans, vin8]
+    i_agg_param = 'AMOUNT(USD)'
+    #filter_results = ','.join(list(filter(None.__ne__,[get_filter_json(x) for x in filters])))
+    filter_results = ''
+
+    
+    json_data = '''
+                {
+                                        "plot_parameters":{
+                                                                "time_scale": "%s",
+                                                                                    "compare_parameter": "%s",
+                                                                                                        "aggregation_method": "%s",
+                                                                                                                            "aggregation_parameter": "%s",
+                                                                                                                                                "filters":[%s]
+                                                                                                                                                                }
+                                                    }
+                        ''' % (i_time_scale, i_compare_param, i_agg_method, i_agg_param, filter_results)
+    sql_data = json_to_sql(json_data)
+    
+    data = get_dataframe(sql_data)
+    
+    labels = get_plot_labels(json_data)
+    columns = data.columns.tolist()
+    columns.remove('x')
+    x_axis_data = [(x, z) for x in data['x'] for z in columns]
+    to_zip = [data[c].tolist() for c in columns]
+    y_axis_data = sum(zip(*to_zip), ())
+    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    
+    
+    hover = HoverTool(tooltips=[
+                        (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+                                        (labels.y_label, "@y_axis_data"),
+                                                    ])
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+    #p.x_range = FactorRange(*x_axis_data)
+    
+    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+                                fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                                                              end=len(columns)))
+    
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.xaxis.axis_label = labels.x_label
+    p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+    #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    return p
+
+
+def update_figure(request):
+    time_scale = request.GET.get('time_scale')
+    script, div = components(create_figure(time_scale))
+    return JsonResponse({"script": script, "div": div})
 
 @login_required(login_url='/login/')
 def save_session(request):
@@ -108,6 +189,21 @@ def view_single(request):
                'script': script, 'divs': divs}
     return render(request, 'single.html', context)
 
+
+@login_required()
+def view_dashboard(request):
+    is_loggedin = True if request.user.is_authenticated else False
+    is_admin = True if request.user.is_superuser else False
+    username = request.user.username
+    plotobj = create_figure("DAY")
+
+    script, divs = components(plotobj)
+
+    plot_available = True
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
+               'plot_script': script, 'plot_div': divs}
+    return render(request, 'dashboard.html', context)
+#    return render(request, 'dashboard.html')
 
 @login_required()
 def view_global_ewt(request):

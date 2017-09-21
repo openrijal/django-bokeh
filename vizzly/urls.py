@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from .views import index, view_single, view_global_ewt, clear_session, save_session
+from .views import index, view_single, view_global_ewt, clear_session, save_session,view_dashboard, update_figure
 from django.contrib.auth import views as auth_views
 from core.views import view_list_plots, view_saved_plots
 
@@ -28,6 +28,8 @@ urlpatterns = [
 
     url(r'^single/$', view_single, name='single'),
     url(r'^global/$', view_global_ewt, name='global'),
+    url(r'^dashboard/$', view_dashboard, name='dashboard'),
+    url(r'^update_figure/$', update_figure, name='update_figure'),
     url(r'^clear_session/$', clear_session, name='clear_session'),
     url(r'^save_session/$', save_session, name='save_session'),
 
