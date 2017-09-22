@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from .views import index, view_single, view_global_ewt, clear_session, save_session
+from .views import index, view_single, view_global_ewt, clear_session, save_session, update_plot, get_iframe
 from django.contrib.auth import views as auth_views
 from core.views import view_list_plots, view_saved_plots
 
@@ -33,13 +33,7 @@ urlpatterns = [
 
     url(r'^list_plots/$', view_list_plots, name='list_plots'),
     url(r'^view_plot/(?P<slug>[^\.]+)', view_saved_plots, name='view_plot'),
+    url(r'^update_plot', update_plot, name='update_plot'),
+    url(r'^get_iframe', get_iframe, name='get_iframe'),
 
-    # url(r'^chart1/$', bar_colormapped, name='chart1'),
-    # url(r'^chart2/$', bar_nested_colormapped, name='chart2'),
-    # url(r'^chart3/$', bar_nested, name='chart3'),
-    # url(r'^chart4/$', bar_stacked, name='chart4'),
-    # url(r'^chart5/$', bar_mixed, name='chart5'),
-    # url(r'^legend1/$', hide_glyph, name='legend1'),
-    # url(r'^legend2/$', mute_glyph, name='legend2'),
-    # url(r'^widget1/$', slider_widget, name='widget1'),
 ]

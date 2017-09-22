@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
@@ -10,6 +10,7 @@ from bokeh.embed import components
 
 import numpy as np
 from django.utils.text import slugify
+from django.views.decorators.csrf import csrf_exempt
 from scipy.stats import gaussian_kde
 
 from .utils import *
@@ -114,43 +115,91 @@ def view_global_ewt(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
-    plot_available = False
 
-    plots = list()
-    json_array = list(request.session.get('json_in_session')) if 'json_in_session' in request.session else list()
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username}
+    return render(request, 'global.html', context)
 
+
+@login_required(login_url='/login/')
+@csrf_exempt
+def update_plot(request):
+    compare_param = request.GET.get('compare_parameter') if 'compare_parameter' in request.GET else ''
+    agg_method = request.GET.get('aggregation_method') if 'aggregation_method' in request.GET else ''
+    agg_param = request.GET.get('aggregation_parameter') if 'aggregation_parameter' in request.GET else ''
+    filter_data = list()
+    pass_freq = 'MONTH'
+
+    eng = tran = miles = ''
+    freq = pass_freq
+
+    if request.POST:
+        eng = request.POST.get('eng') if 'eng' in request.POST else ''
+        tran = request.POST.get('tran') if 'tran' in request.POST else ''
+        miles = request.POST.get('miles') if 'miles' in request.POST else ''
+        freq = request.POST.get('freq') if 'freq' in request.POST else ''
+
+        if eng:
+            filter_data.append({
+                "parameter": "ENG",
+                "operator": "=",
+                "value": eng,
+                "type": "string"
+            })
+
+        if tran:
+            filter_data.append({
+                "parameter": "TRAN",
+                "operator": "=",
+                "value": tran,
+                "type": "string"
+            })
+
+        if miles:
+            filter_data.append({
+                "parameter": "MLG",
+                "operator": "=",
+                "value": miles,
+                "type": "string"
+            })
+
+        if freq:
+            pass_freq = freq
+
+    json_data = '''
+                    {
+                        "plot_parameters":{
+                            "time_scale": "%s",
+                            "compare_parameter": "%s",
+                            "aggregation_method": "%s",
+                            "aggregation_parameter": "%s",
+                            "filters": []
+                        }
+                    }
+                    ''' % (pass_freq, compare_param, agg_method, agg_param)
+
+    ly = get_layout(json_data, filter_data)
+
+    script, div = components(ly)
+
+    context = {'script': script, 'div': div, 'cp': compare_param, 'am': agg_method, 'ap': agg_param, 'eng': eng,
+               'tran': tran, 'miles': miles, 'freq': freq}
+    return render(request, 'single.html', context)
+
+
+@csrf_exempt
+def get_iframe(request):
     if request.POST:
         compare_param = request.POST.get('compare_parameter') if 'compare_parameter' in request.POST else ''
         agg_method = request.POST.get('aggregation_method') if 'aggregation_method' in request.POST else ''
         agg_param = request.POST.get('aggregation_parameter') if 'aggregation_parameter' in request.POST else ''
 
-        json_data = '''
-            {
-                "plot_parameters":{
-                    "time_scale": "%s",
-                    "compare_parameter": "%s",
-                    "aggregation_method": "%s",
-                    "aggregation_parameter": "%s",
-                    "filters":[]
-                }
-            }
-        ''' % ('MONTH', compare_param, agg_method, agg_param)
+        iframe_html = """
+            <iframe width="100%" height="100%" frameborder="0" scrolling="no" onload="resizeIframe(this)"
+            src="/update_plot?compare_parameter={0}&aggregation_method={1}&aggregation_parameter={2}">
+            </iframe><hr />
+        """.format(compare_param, agg_method, agg_param)
 
-        json_array.append(json_data)
-        request.session['json_in_session'] = json_array
-
-        for jd in json_array:
-            ly = get_layout(jd)
-            plots.append(ly)
-
-    script, divs = components(tuple(plots))
-
-    if divs:
-        plot_available = True
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
-               'script': script, 'divs': divs}
-    return render(request, 'global.html', context)
+        return HttpResponse(iframe_html.strip(), content_type='text/html')
 
 # @login_required(login_url='/login/')
 # def bar_colormapped(request):
@@ -232,7 +281,7 @@ def view_global_ewt(request):
 #
 #     plot_available = False
 #
-#     fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
+#     fruits = ['Apples', 'Pears', 'Nectarines', 'Pluconsole.log("ALL");ms', 'Grapes', 'Strawberries']
 #     years = ["2015", "2016", "2017"]
 #     colors = ["#c9d9d3", "#718dbf", "#e84d60"]
 #

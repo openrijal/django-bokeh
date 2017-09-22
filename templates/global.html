@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load manipulators %}
-
 {% block title %}Welcome, {{ username }}{% endblock %}
 
 {% block actions %}
@@ -23,12 +21,10 @@
     <div class="col-md-12">
         <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#myModal"><i
                 class="glyphicon glyphicon-plus"></i> Add Plot</a>
-        {% if plot_available %}
-            <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i
-                    class="glyphicon glyphicon-remove"></i> Clear All</a>
-            <a href="#" class="btn btn-raised btn-default" id="btnSaveAll"><i
-                    class="glyphicon glyphicon-save"></i> Save Canvas</a>
-        {% endif %}
+{#            <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i#}
+{#                    class="glyphicon glyphicon-remove"></i> Clear All</a>#}
+{#            <a href="#" class="btn btn-raised btn-primary" id="btnSaveAll"><i#}
+{#                    class="glyphicon glyphicon-save"></i> Save Canvas</a>#}
         <!-- Modal -->
         <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -57,14 +53,14 @@
                                             </div>
                                             <div id="collapseOne" class="panel-collapse collapse">
                                                 <div class="panel-body">
-                                                    <form action="/global/" method="POST" role="search" id="formEWT">
+                                                    <form action="#" method="POST" role="search" id="formEWT">
                                                         {% csrf_token %}
-                                                        <div class="input-group" style="padding-bottom:10px">
-                                                   <span class="input-group-addon"
-                                                         id="basic-addonTitle">Plot Title</span>
-                                                            <input type="text" class="form-control" name="frmTitleEWT"
-                                                                   id="frmTitleEWT">
-                                                        </div>
+{#                                                        <div class="input-group" style="padding-bottom:10px">#}
+{#                                                   <span class="input-group-addon"#}
+{#                                                         id="basic-addonTitle">Plot Title</span>#}
+{#                                                            <input type="text" class="form-control" name="frmTitleEWT"#}
+{#                                                                   id="frmTitleEWT">#}
+{#                                                        </div>#}
                                                         <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon1">Compare Type</span>
@@ -172,48 +168,16 @@
         <hr/>
     </div>
 
-    {% if plot_available %}
-        {% for div in divs %}
-            <div class="col-md-12">
-                <form class="form-inline">
-                    <input type="hidden" name="graph_uuid" value="{{ div|get_plot_id }}" />
-                    <div class="form-group col-md-2">
-                        <label for="eng_{{ div|get_plot_id }}">ENG</label>
-                        <input type="text" class="form-control input-sm"
-                               placeholder="something..."/>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="tran_{{ div|get_plot_id }}">TRAN</label>
-                        <input type="text" class="form-control input-sm"
-                               placeholder="something..."/>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="miles_{{ div|get_plot_id }}">MILES</label>
-                        <input type="text" class="form-control input-sm"
-                               placeholder="something..."/>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="freq_{{ div|get_plot_id }}">PERIOD</label>
-                        <div class="btn-group btn-group-sm btn-group-justified" role="group" aria-label="frequency">
-                            <button type="button" class="btn btn-default" aria-label="daily">Daily</button>
-                            <button type="button" class="btn btn-default" aria-label="monthly">Monthly</button>
-                            <button type="button" class="btn btn-default" aria-label="quarterly">Quarterly</button>
-                        </div>
-                    </div>
-                    <div class="form-group col-md-2">
-                        <button type="submit" class="btn btn-primary">Execute</button>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-12">
-                {{ div|safe }}
-                <hr/>
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div id="plot_container" class="col-md-12"></div>
 
 {% endblock %}
 
 {% block extras %}
-    {{ script|safe }}
+
+    <script>
+      function resizeIframe(obj) {
+        obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+      }
+    </script>
+
 {% endblock %}

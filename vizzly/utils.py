@@ -32,7 +32,7 @@ def ewt_date_convert(time_scale):
     return dt
 
 
-def json_to_sql(json_data):
+def json_to_sql(json_data, filters):
     query_params = json.loads(json_data)
     time_scale = query_params.get('plot_parameters').get('time_scale')
     compare_parameter = query_params.get('plot_parameters').get('compare_parameter')
@@ -40,11 +40,14 @@ def json_to_sql(json_data):
     aggregation_parameter = query_params.get('plot_parameters').get('aggregation_parameter', "1")
 
     where_clause = "1"
-    for ft in query_params.get('plot_parameters').get('filters'):
+
+    for ft in filters:
         where_clause += " AND `{0}`{1}'{2}'".format(ft.get('parameter'), ft.get('operator'), ft.get('value'))
 
     query = "SELECT {0} x, `{1}` z, {2}(`{3}`) y FROM ewt WHERE {4} GROUP BY {0}, `{1}`".format(
         ewt_date_convert(time_scale), compare_parameter, aggregation_method, aggregation_parameter, where_clause)
+
+    print(query)
 
     return query
 
@@ -70,8 +73,8 @@ def get_plot_labels(json_data):
     return PlotLabels(title=plot_title, x_label=x_label, y_label=y_label)
 
 
-def get_layout(json_data):
-    sql_data = json_to_sql(json_data)
+def get_layout(json_data, filters):
+    sql_data = json_to_sql(json_data, filters)
     data = get_dataframe(sql_data)
 
     labels = get_plot_labels(json_data)
