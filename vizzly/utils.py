@@ -47,8 +47,6 @@ def json_to_sql(json_data, filters):
     query = "SELECT {0} x, `{1}` z, {2}(`{3}`) y FROM ewt WHERE {4} GROUP BY {0}, `{1}`".format(
         ewt_date_convert(time_scale), compare_parameter, aggregation_method, aggregation_parameter, where_clause)
 
-    print(query)
-
     return query
 
 

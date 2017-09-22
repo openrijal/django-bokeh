@@ -17,21 +17,21 @@ $(function () {
         });
     });
 
-    $('#btnSaveAll').on('click', function () {
-        console.log("Saving....");
-        some_random = Math.floor((Math.random() * 100000000) + 1);
-        $.ajax({
-            url: "/save_session/",
-            method: 'GET', // or another (GET), whatever you need
-            data: {
-                "canvas_name": "untitled-" + some_random // data you need to pass to your function
-            },
-            success: function (data) {
-                console.log("Saved !!");
-                window.location.href = '/list_plots/';
-            }
-        });
-    });
+    // $('#btnSaveAll').on('click', function () {
+    //     console.log("Saving....");
+    //     some_random = Math.floor((Math.random() * 100000000) + 1);
+    //     $.ajax({
+    //         url: "/save_session/",
+    //         method: 'GET', // or another (GET), whatever you need
+    //         data: {
+    //             "canvas_name": "untitled-" + some_random // data you need to pass to your function
+    //         },
+    //         success: function (data) {
+    //             console.log("Saved !!");
+    //             window.location.href = '/list_plots/';
+    //         }
+    //     });
+    // });
 
 
     $('#aggregationTypeEWT').on('change', (function () {
@@ -61,11 +61,35 @@ $("#formEWT").submit(function (e) {
         }
     }).done(function (data) {
         $('#plot_container').append(data);
-        $('#myModal').modal('toggle');
+        $('#inputSelModal').modal('toggle');
+        $('#btnSaveAll').removeClass('hide');
     });
 });
 
 
 $("#filterIframeForm .form-control").change(function (e) {
     $("#filterIframeForm").submit();
+});
+
+$('#savePlotInput').submit(function (e) {
+    e.preventDefault();
+    var allPlots = new Array();
+    $('iframe').each(function () {
+        var singlePlot = {};
+        singlePlot['default_filters'] = $(this).contents().find('#filFrmDefault').val();
+        singlePlot['eng'] = $(this).contents().find('#filFrmEng').val();
+        singlePlot['tran'] = $(this).contents().find('#filFrmTran').val();
+        singlePlot['miles'] = $(this).contents().find('#filFrmMiles').val();
+        singlePlot['freq'] = $(this).contents().find('#filFrmFreq').val();
+        allPlots.push(singlePlot);
+    });
+    $.ajax('/save_session/', {
+        method: 'POST',
+        data: {
+            'canvas_name': $('#canvasName').val(),
+            'allPlots': JSON.stringify(allPlots)
+        }
+    }).done(function () {
+        window.location = '/list_plots/';
+    });
 });

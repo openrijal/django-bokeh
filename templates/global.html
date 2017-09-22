@@ -19,14 +19,61 @@
 
 {% block content %}
     <div class="col-md-12">
-        <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#myModal"><i
+        <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#inputSelModal"><i
                 class="glyphicon glyphicon-plus"></i> Add Plot</a>
-{#            <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i#}
-{#                    class="glyphicon glyphicon-remove"></i> Clear All</a>#}
-{#            <a href="#" class="btn btn-raised btn-primary" id="btnSaveAll"><i#}
-{#                    class="glyphicon glyphicon-save"></i> Save Canvas</a>#}
+        <a href="#" class="btn btn-raised btn-primary hide" data-toggle="modal" data-target="#savePlotModal"
+           id="btnSaveAll"><i class="glyphicon glyphicon-save"></i> Save Canvas</a>
+        {#            <a href="#" class="btn btn-raised btn-danger" id="btnClearAll"><i#}
+        {#                    class="glyphicon glyphicon-remove"></i> Clear All</a>#}
+
+
+        <div id="savePlotModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/save_session/" method="POST" id="savePlotInput">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Save Your Plot</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group" style="padding-bottom: 10px">
+                                <label for="canvas_name">Canvas Name:</label>
+                                <input type="text" id="canvasName" name="canvas_name" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-raised btn-primary">
+                                <i class="glyphicon glyphicon-save"></i> Save Canvas
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+
+        {#        <div id="savePlotModal" class="modal fade" role="dialog">#}
+        {#            <div class="modal-dialog">#}
+        {##}
+        {#                <!-- Modal content-->#}
+        {#                <div class="modal-content">#}
+        {#                    <div class="modal-body">#}
+        {#                        <div class="container-fluid">#}
+        {##}
+        {#                            <h3 class="panel-title">#}
+        {#                                Save Plot As#}
+        {#                                <button type="button" class="close" data-dismiss="modal">&times;</button>#}
+        {##}
+        {#                            </h3>#}
+        {##}
+        {#                        </div>#}
+        {#                    </div>#}
+        {#                </div>#}
+        {#            </div>#}
+        {#        </div>#}
         <!-- Modal -->
-        <div id="myModal" class="modal fade" role="dialog">
+        <div id="inputSelModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -54,13 +101,6 @@
                                             <div id="collapseOne" class="panel-collapse collapse">
                                                 <div class="panel-body">
                                                     <form action="#" method="POST" role="search" id="formEWT">
-                                                        {% csrf_token %}
-{#                                                        <div class="input-group" style="padding-bottom:10px">#}
-{#                                                   <span class="input-group-addon"#}
-{#                                                         id="basic-addonTitle">Plot Title</span>#}
-{#                                                            <input type="text" class="form-control" name="frmTitleEWT"#}
-{#                                                                   id="frmTitleEWT">#}
-{#                                                        </div>#}
                                                         <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon1">Compare Type</span>
@@ -175,9 +215,9 @@
 {% block extras %}
 
     <script>
-      function resizeIframe(obj) {
-        obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
-      }
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        }
     </script>
 
 {% endblock %}

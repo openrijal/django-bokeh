@@ -19,15 +19,17 @@ from core.models import SavedPlot
 
 
 @login_required(login_url='/login/')
+@csrf_exempt
 def save_session(request):
     user = request.user
-    plots = '<;;>'.join(list(request.session.get('json_in_session')))
-    name = request.GET.get('canvas_name')
+
+    plots = request.POST.get('allPlots')
+    name = request.POST.get('canvas_name')
     slug = slugify(name)
 
-    p = SavedPlot.objects.create(name=name, slug=slug, user=user, plots=plots)
+    SavedPlot.objects.create(name=name, slug=slug, user=user, plots=plots)
 
-    return render(request, 'view_plot.html', {'plot': p})
+    return HttpResponse("Success", content_type='text/html')
 
 
 @login_required(login_url='/login/')
@@ -129,6 +131,8 @@ def update_plot(request):
     filter_data = list()
     pass_freq = 'MONTH'
 
+    layouts_session = request.session.get('session_layouts') if 'session_layouts' in request.session else list()
+
     eng = tran = miles = ''
     freq = pass_freq
 
@@ -180,6 +184,9 @@ def update_plot(request):
     ly = get_layout(json_data, filter_data)
 
     script, div = components(ly)
+
+    layouts_session.append(div)
+    request.session['session_layouts'] = layouts_session
 
     context = {'script': script, 'div': div, 'cp': compare_param, 'am': agg_method, 'ap': agg_param, 'eng': eng,
                'tran': tran, 'miles': miles, 'freq': freq}
