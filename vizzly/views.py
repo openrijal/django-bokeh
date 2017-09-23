@@ -8,8 +8,10 @@ from django.http import JsonResponse
 
 from bokeh.resources import CDN
 from bokeh.embed import components
+from datetime import datetime
 
 import numpy as np
+import pandas
 from django.utils.text import slugify
 from scipy.stats import gaussian_kde
 
@@ -128,34 +130,50 @@ def create_bar_plot(input_json):
 
 
 def create_line_plot(input_json):
-    data = get_dataframe(json_to_sql(input_json))
-    print(data)
+    request_json = json.loads(input_json)
+    data = get_raw_dataframe(json_to_sql(input_json))
     labels = get_plot_labels(input_json)
-    columns = data.columns.tolist()
-    columns.remove('x')
-    x_axis_data = [(x, z) for x in data['x'] for z in columns]
-    to_zip = [data[c].tolist() for c in columns]
-    y_axis_data = sum(zip(*to_zip), ())
-    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
-    
+    print(data.columns)
+    #pc = pandas.pivot_table(data, values='y',index='x',columns='z')
+    pc = data
+    numlines = len(pc.columns)
+    mypalette = viridis(numlines)
+
+    col = []
+    [col.append(i) for i in pc.columns]
+
+    p = figure( title=labels.title, width = 1200, height = 600)
+
+    if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_method') == 'date': 
+        p = figure( x_axis_type = "datetime", title=labels.title, width = 1200, height = 600)
+        if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_param') == 'DAY':
+            fmt_str = '%Y-%m-%d'
+        elif request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_param') == 'MONTH':
+            fmt_str= '%Y-%m'
+    else:
+        p = figure( title=labels.title, width = 1200, height = 600)
+
+    p.xaxis.axis_label = labels.x_label
+    p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+
+    for (columnnames, colore) in zip(col, mypalette):
+        if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_method') == 'date': 
+            xs = [datetime.strptime(date, fmt_str) for date in pc.index.values.tolist()]
+            p.line(xs, pc[columnnames].tolist(),legend = columnnames,  color = colore )
+        else:
+            p.line(pc.index.values.tolist(), pc[columnnames].tolist(),legend = columnnames,  color = colore )
+
     
    # hover = HoverTool(tooltips=[
    #                     (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
    #                                     (labels.y_label, "@y_axis_data"),
    #                                                 ])
-    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
     
-    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
-                                fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
-                                                                              end=len(columns)))
-    
-    p.y_range.start = 0
-    p.x_range.range_padding = 0.1
-    p.xaxis.major_label_orientation = 1
-    p.xgrid.grid_line_color = None
-    p.xaxis.axis_label = labels.x_label
-    p.yaxis.axis_label = labels.y_label
-    p.title.align = 'center'
     #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
     return p
 
@@ -169,7 +187,7 @@ def create_figure_from_json(input_json):
         return create_bar_plot(input_json)
 
     if request_json.get('plot_parameters').get('plot_type') == "line":
-        return create_bar_plot(input_json)
+        return create_line_plot(input_json)
 
 
 

@@ -72,6 +72,7 @@ def json_to_sql_old(json_data):
 
 def json_to_sql(json_data):
     query_params = json.loads(json_data)
+    plot_type = query_params.get('plot_parameters').get('plot_type')
     x_axis = query_params.get('plot_parameters').get('x_axis', None)
     y_axis = query_params.get('plot_parameters').get('y_axis', None)
 
@@ -82,7 +83,7 @@ def json_to_sql(json_data):
 
     x_primary_param = x_axis.get('primary').get('parameter')
     x_primary_binning = x_axis.get('primary').get('binning_method')
-    x_primary_binning_param = x_axis.get('primary').get('binning_param')
+    x_primary_binning_param = x_axis.get('primary').get('binning_param', None)
     x_categorical_param = x_axis.get('categorical').get('parameter')
 
     y_agg_method = y_axis.get('aggregation_method')
@@ -93,10 +94,15 @@ def json_to_sql(json_data):
     else:
         agg_param = '{0}(`{1}`)'.format(y_agg_method, y_agg_param)
 
-    if x_primary_binning == 'date':
+
+    if x_primary_binning == 'date' and x_primary_binning_param:
         x_primary =  date_binning(x_primary_binning_param, x_primary_param)
-    elif x_primary_binning == 'number':
+    elif x_primary_binning == 'number' and x_primary_binning_param:
         x_primary = number_binning(x_primary_binning_param, x_primary_param)
+    elif x_primary_binning == 'date':
+        x_primary = "STR_TO_DATE({0}, '%Y-%m-%d')".format(x_primary_param)
+    elif x_primary_binning == 'number':
+        x_primary = "CAST({0} as signed integer)".format(x_primary_param)
 
     query = "SELECT {0} x, `{1}` z, {2} y FROM ewt WHERE {3} GROUP BY {0}, `{1}`".format(
         x_primary, x_categorical_param, agg_param, where_clause)
