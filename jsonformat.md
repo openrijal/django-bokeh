@@ -13,8 +13,7 @@ Example 1:
 				"binning_method": "date"
 			},
 			"categorical":{
-				"compare_parameter": "BDYMDL",
-				"binning_method" : "numbers"
+				"parameter": "BDYMDL"
 			}
 		},
 		"y_axis":{
@@ -75,4 +74,33 @@ The parameter name which has to be used for providing the data to the primary x-
   - MLG
   
 * ### *binning_method* - [parent object - 'x-axis.primary']
-The 
+The [binning](https://en.wikipedia.org/wiki/Data_binning) method that has to be applied to group the values.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*:
+  - number
+  - date
+  
+  * ### *categorical* - [parent object - 'x-axis']
+Object specifiying details on the primary x-axis paramters.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: **nested object**
+  
+  
+* ### *parameter* - [parent object - 'x-axis.categorical']
+The parameter name which has to be used for providing the data to the categorical x-axis parameter. This should be the exact name of the database column.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: 
+  - RPR-DLR
+  - CLAIM
+  - BDY MDL
+  - PART NO
+  - VIN
+  - ENG
+  - TRAN
+  
