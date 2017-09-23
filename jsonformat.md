@@ -104,3 +104,79 @@ The parameter name which has to be used for providing the data to the categorica
   - ENG
   - TRAN
   
+* ### *y-axis* 
+The y-axis specifications for the plot. The y-axis either consists of a simple count or another aggregate function based on some other parameter.
+
+  *Applies to*: **bar**, **line**
+  
+  *Allowed Values*: **nested object**
+  
+* ### *aggregation_method* - [parent object - 'y-axis']
+The aggregation method to be used to rollup the values.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*:
+  - COUNT
+  - SUM
+  - AVERAGE
+  
+ * ### *aggregation_parameter* - [parent object - 'y-axis']
+ The parameter name on which the aggregation method has to be applied. This is *not* needed if the aggregation_method is 'COUNT'.
+ 
+   *Applies to*: **inherit**
+ 
+   *Allowed Values*:
+   - AMOUNT(USD)
+   - MLG
+   
+ * ### *filters*
+ The filters section for the plot. All the filters in the array are treated as a logical 'AND' operation.
+ 
+   *Applies to*: **all**
+   
+   *Allowed Values*: **json array with filter details**
+
+* ### *parameter* - [parent object - 'y-axis.filters']
+The parameter based on which the filtering is to be done. This can be any column from the database.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*:
+  - ZONE
+  - RPR-DLR
+  - CLAIM
+  - BDY MDL
+  - LOPS
+  - PART NO
+  - VIN
+  - ENG
+  - TRAN
+  
+* ### *operator* - [parent object - 'y-axis.filters']
+The operator to be applied to filter.
+ 
+  *Applies to*: **inherit**
+  
+  *Allowed Values*:
+  - =
+  - >
+  - <
+  - >=
+  - <=
+
+* ### *value* - [parent object - 'y-axis.filters']
+The value to be applied to filter.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: **any value**
+  
+
+* ### *type* - [parent object - 'y-axis.filters']
+The type of the filter value to be applied.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: 
+  - string
