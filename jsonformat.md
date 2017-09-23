@@ -4,36 +4,53 @@ Following is a concise description of the JSON Request format specifying the det
 
 Example 1:
 ```javascript
-{
+             {
+	"plot_parameters":{
+		"plot_type": "bar",
+		"x_axis":{
+			"primary" :{
+				"parameter": "MLG",
+				"binning_method": "number",
+				"binning_param" : "1000"
+			},
+			"categorical":{
+				"parameter": "BDY MDL"
+			}
+		},
+		"y_axis":{
+			"aggregation_method": "COUNT",
+			"aggregation_parameter" : "AMOUNT(USD)"
+		},
+		"filters":[
+		]
+	}
+}                                
+```
+
+
+Example 2:
+```javascript
+             {
 	"plot_parameters":{
 		"plot_type": "bar",
 		"x_axis":{
 			"primary" :{
 				"parameter": "REPAIR-DT",
-				"binning_method": "date"
+				"binning_method": "date",
+				"binning_param" : "QUARTER"
 			},
 			"categorical":{
-				"parameter": "BDYMDL"
+				"parameter": "BDY MDL"
 			}
 		},
 		"y_axis":{
-			"aggregation_method": "SUM",
+			"aggregation_method": "COUNT",
 			"aggregation_parameter" : "AMOUNT(USD)"
 		},
-		"filters":[{
-			"parameter":"RPRDLR",
-			"operator": "=",
-			"value": "098763",
-			"type": "string"
-		},{
-			"parameter":"ENG",
-			"operator": "=",
-			"value": "SMP",
-			"type" : "string"
-		}
+		"filters":[
 		]
 	}
-}
+}                                
 ```
 
 * ### *plot_type*
