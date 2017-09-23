@@ -94,14 +94,9 @@ def create_figure(time_scale):
 
 
 
-def create_figure_from_json(input_json):
-
-    json_data = input_json
-    sql_data = json_to_sql(json_data)
-    
-    data = get_dataframe(sql_data)
-    
-    labels = get_plot_labels(json_data)
+def create_bar_plot(input_json):
+    data = get_dataframe(json_to_sql(input_json))
+    labels = get_plot_labels(input_json)
     columns = data.columns.tolist()
     columns.remove('x')
     x_axis_data = [(x, z) for x in data['x'] for z in columns]
@@ -130,6 +125,51 @@ def create_figure_from_json(input_json):
     p.title.align = 'center'
     #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
     return p
+
+
+def create_line_plot(input_json):
+    data = get_dataframe(json_to_sql(input_json))
+    print(data)
+    labels = get_plot_labels(input_json)
+    columns = data.columns.tolist()
+    columns.remove('x')
+    x_axis_data = [(x, z) for x in data['x'] for z in columns]
+    to_zip = [data[c].tolist() for c in columns]
+    y_axis_data = sum(zip(*to_zip), ())
+    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    
+    
+   # hover = HoverTool(tooltips=[
+   #                     (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+   #                                     (labels.y_label, "@y_axis_data"),
+   #                                                 ])
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+    
+    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+                                fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                                                              end=len(columns)))
+    
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.xaxis.axis_label = labels.x_label
+    p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+    #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    return p
+
+
+
+def create_figure_from_json(input_json):
+
+    request_json = json.loads(input_json)
+
+    if request_json.get('plot_parameters').get('plot_type') == "bar":
+        return create_bar_plot(input_json)
+
+    if request_json.get('plot_parameters').get('plot_type') == "line":
+        return create_bar_plot(input_json)
 
 
 
