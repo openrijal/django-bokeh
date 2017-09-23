@@ -48,15 +48,15 @@ def create_figure(time_scale):
 
     
     json_data = '''
-                {
-                                        "plot_parameters":{
-                                                                "time_scale": "%s",
-                                                                                    "compare_parameter": "%s",
-                                                                                                        "aggregation_method": "%s",
-                                                                                                                            "aggregation_parameter": "%s",
-                                                                                                                                                "filters":[%s]
-                                                                                                                                                                }
-                                                    }
+{
+"plot_parameters":{
+    "time_scale": "%s",
+    "compare_parameter": "%s",
+    "aggregation_method": "%s",
+    "aggregation_parameter": "%s",
+    "filters":[%s]
+}
+}
                         ''' % (i_time_scale, i_compare_param, i_agg_method, i_agg_param, filter_results)
     sql_data = json_to_sql(json_data)
     
