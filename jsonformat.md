@@ -53,6 +53,31 @@ Example 2:
 }                                
 ```
 
+Example 3
+```javascript
+             {
+	"plot_parameters":{
+		"plot_type": "line",
+		"x_axis":{
+			"primary" :{
+				"parameter": "MLG",
+				"binning_method": "number"
+			},
+			"categorical":{
+				"parameter": "TRAN"
+			}
+		},
+		"y_axis":{
+			"aggregation_method": "SUM",
+			"aggregation_parameter" : "AMOUNT(USD)"
+		},
+		"filters":[
+		]
+	}
+}                                
+
+```
+
 * ### *plot_type*
 The Type of plot to be generated.
 
