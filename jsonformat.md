@@ -48,8 +48,31 @@ The Type of plot to be generated.
   - line
 
 * ### *x_axis*
-The parameters required for transforming data required for x_axis
+The parameters required for transforming data required for x_axis. There can be two values specified for the x-axis. One as a primary x-axis paramter, and the second as the categorical value for x-axis. Binning methods need to be specified  for the each of the axis parameters.
 
   *Applies to*: **bar**, **line**
   
   *Allowed Values*: **nested object**
+
+* ### *primary* - [parent object - 'x-axis']
+Object specifiying details on the primary x-axis paramters.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: **nested object**
+  
+* ### *parameter* - [parent object - 'x-axis.primary']
+The parameter name which has to be used for providing the data to the primary x-axis parameter. This should be the exact name of the database column.
+
+  *Applies to*: **inherit**
+  
+  *Allowed Values*: 
+  - REPAIR-DT
+  - PAID-DT
+  - Vehicle BUILT-DT
+  - ENG BUILT-DT
+  - TRN BUILT-DT
+  - MLG
+  
+* ### *binning_method* - [parent object - 'x-axis.primary']
+The 
