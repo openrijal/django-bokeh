@@ -93,9 +93,49 @@ def create_figure(time_scale):
     return p
 
 
+
+def create_figure_from_json(input_json):
+
+    json_data = input_json
+    sql_data = json_to_sql(json_data)
+    
+    data = get_dataframe(sql_data)
+    
+    labels = get_plot_labels(json_data)
+    columns = data.columns.tolist()
+    columns.remove('x')
+    x_axis_data = [(x, z) for x in data['x'] for z in columns]
+    to_zip = [data[c].tolist() for c in columns]
+    y_axis_data = sum(zip(*to_zip), ())
+    source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    
+    
+    hover = HoverTool(tooltips=[
+                        (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+                                        (labels.y_label, "@y_axis_data"),
+                                                    ])
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+    #p.x_range = FactorRange(*x_axis_data)
+    
+    p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
+                                fill_color=factor_cmap('x_axis_data', palette=viridis(len(columns)), factors=columns, start=1,
+                                                                              end=len(columns)))
+    
+    p.y_range.start = 0
+    p.x_range.range_padding = 0.1
+    p.xaxis.major_label_orientation = 1
+    p.xgrid.grid_line_color = None
+    p.xaxis.axis_label = labels.x_label
+    p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+    #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    return p
+
+
+
 def update_figure(request):
-    time_scale = request.GET.get('time_scale')
-    script, div = components(create_figure(time_scale))
+    input_json = request.GET.get('input_json')
+    script, div = components(create_figure_from_json(input_json))
     return JsonResponse({"script": script, "div": div})
 
 @login_required(login_url='/login/')
@@ -191,6 +231,29 @@ def view_single(request):
 
 
 @login_required()
+def json_play(request):
+    print("DEBUG")
+    is_loggedin = True if request.user.is_authenticated else False
+    is_admin = True if request.user.is_superuser else False
+    username = request.user.username
+#    print('Data object {0}'.format(request.GET.get('data', None)))
+#    if request.GET.get('data', None) == None:
+#        plotobj = None
+#    else:
+#        plotobj = create_figure_from_json(request.GET.get('data').get('input_json'))
+#
+#
+#    script, divs = components(plotobj)
+
+    plot_available = True
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available}
+#               'plot_script': script, 'plot_div': divs}
+    return render(request, 'json_play.html', context)
+
+
+
+
+@login_required()
 def view_dashboard(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
@@ -203,7 +266,6 @@ def view_dashboard(request):
     context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plot_available': plot_available,
                'plot_script': script, 'plot_div': divs}
     return render(request, 'dashboard.html', context)
-#    return render(request, 'dashboard.html')
 
 @login_required()
 def view_global_ewt(request):

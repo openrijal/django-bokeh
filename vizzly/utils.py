@@ -31,8 +31,29 @@ def ewt_date_convert(time_scale):
 
     return dt
 
+def date_binning(time_scale, date_param):
+    ts = time_scale.upper()
+    dt = "`{0}`".format(date_param)
+    dt_obj = "STR_TO_DATE({0}, '%Y-%m-%d')".format(dt)
 
-def json_to_sql(json_data):
+    if ts == "QUARTER":
+        yr = "YEAR({0})".format(dt_obj)
+        qt = "QUARTER({0})".format(dt_obj)
+        dt = "CONCAT(CAST({0} AS CHAR(4)),'-', CAST({1} AS CHAR(4)))".format(yr, qt)
+
+    elif ts == "MONTH":
+        yr = "YEAR({0})".format(dt_obj)
+        mt = "MONTH({0})".format(dt_obj)
+        dt = "CONCAT(CAST({0} AS CHAR(4)),'-', CAST({1} AS CHAR(4)))".format(yr, mt)
+
+    return dt
+
+
+def number_binning(bin_size, number_param):
+    return "CONCAT( FLOOR(`{0}`/{1})*{1}, ' - ', CEIL(`{0}`/{1})*{1})".format(number_param, bin_size)
+
+
+def json_to_sql_old(json_data):
     query_params = json.loads(json_data)
     time_scale = query_params.get('plot_parameters').get('time_scale')
     compare_parameter = query_params.get('plot_parameters').get('compare_parameter')
@@ -49,21 +70,66 @@ def json_to_sql(json_data):
     return query
 
 
+def json_to_sql(json_data):
+    query_params = json.loads(json_data)
+    x_axis = query_params.get('plot_parameters').get('x_axis', None)
+    y_axis = query_params.get('plot_parameters').get('y_axis', None)
+
+    # Create the filters array
+    where_clause = "1"
+    for ft in query_params.get('plot_parameters').get('filters'):
+        where_clause += " AND `{0}`{1}'{2}'".format(ft.get('parameter'), ft.get('operator'), ft.get('value'))
+
+    x_primary_param = x_axis.get('primary').get('parameter')
+    x_primary_binning = x_axis.get('primary').get('binning_method')
+    x_primary_binning_param = x_axis.get('primary').get('binning_param')
+    x_categorical_param = x_axis.get('categorical').get('parameter')
+
+    y_agg_method = y_axis.get('aggregation_method')
+    y_agg_param = y_axis.get('aggregation_parameter', None)
+
+    if y_agg_method.upper() == 'COUNT':
+        agg_param = 'COUNT(1)'
+    else:
+        agg_param = '{0}(`{1}`)'.format(y_agg_method, y_agg_param)
+
+    if x_primary_binning == 'date':
+        x_primary =  date_binning(x_primary_binning_param, x_primary_param)
+    elif x_primary_binning == 'number':
+        x_primary = number_binning(x_primary_binning_param, x_primary_param)
+
+    query = "SELECT {0} x, `{1}` z, {2} y FROM ewt WHERE {3} GROUP BY {0}, `{1}`".format(
+        x_primary, x_categorical_param, agg_param, where_clause)
+
+    print(query)
+    return query
+
+
 def get_plot_labels(json_data):
     query_params = json.loads(json_data)
-    time_adj_maps = {'DAY': 'Daily', 'MONTH': 'Monthly', 'QUARTER': 'Quarterly'}
-    time_adj = time_adj_maps[query_params.get('plot_parameters').get('time_scale')]
+    x_axis = query_params.get('plot_parameters').get('x_axis', None)
+    y_axis = query_params.get('plot_parameters').get('y_axis', None)
 
-    if query_params.get('plot_parameters').get('aggregation_method') == 'COUNT':
+    x_primary_param = x_axis.get('primary').get('parameter')
+    x_primary_binning = x_axis.get('primary').get('binning_method')
+    x_primary_binning_param = x_axis.get('primary').get('binning_param')
+    x_categorical_param = x_axis.get('categorical').get('parameter')
+
+    y_agg_method = y_axis.get('aggregation_method')
+    y_agg_param = y_axis.get('aggregation_parameter', None)
+
+    print('Aggregation method {0}'.format(y_agg_method))
+
+    if y_agg_method == 'COUNT':
         aggr_str = 'Count'
     else:
-        aggr_str = 'Sum of {0}'.format(query_params.get('plot_parameters').get('aggregation_parameter'))
-    plot_title = '{0} {1} by {2}'.format(time_adj, aggr_str,
-                                         query_params.get('plot_parameters').get('compare_parameter'))
+        aggr_str = '{0} of {1}'.format(y_agg_method, y_agg_param)
 
-    x_label = '{0}/{1}'.format(query_params.get('plot_parameters').get('compare_parameter'),
-                               query_params.get('plot_parameters').get('time_scale').capitalize())
+
+    x_label = '{0}/{1} - {2}'.format(x_categorical_param, x_primary_binning_param, x_primary_param)
     y_label = aggr_str
+
+    plot_title = '{0} vs {1}'.format(y_label, x_label)
 
     PlotLabels = collections.namedtuple("PlotLabels", "title x_label y_label")
 
