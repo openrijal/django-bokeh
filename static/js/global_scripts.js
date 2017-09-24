@@ -25,7 +25,7 @@ $(function () {
        if(selected_type=="bar" || selected_type=="line")
        {
             options+= '   <option value="MLG">MLG</option>';
-             options+= '   <option value="RPR_DT">RPR DT</option>';
+             options+= '   <option value="REPAIR-DT">RPR DT</option>';
                $('#x_prim_param').find('option').remove()
                $('#x_prim_param').append(options);
           $('#primary_param_div').show();
@@ -100,7 +100,7 @@ $("#formEWT").submit(function (e) {
         method: 'POST',
         data: data
     }).done(function (data) {
-        $('#plot_container').append(data);
+    $('#plot_container').append('<div class="col-md-6 col-xs-6" style="padding:10px; ">'+data+'</div>');
         $('#inputSelModal').modal('toggle');
         $('#btnSaveAll').removeClass('hide');
         $('#btnClearAll').removeClass('hide');
@@ -132,6 +132,7 @@ $('#savePlotInput').submit(function (e) {
         }
     }).done(function () {
        $('#savePlotModal').modal('hide');
+       alert("Canvas Saved");
     });
 });
 
@@ -149,18 +150,19 @@ $('.plot_link').click( function(e) {
          compare_parameter= plot_vars[0].split("=")[1];
          aggregation_method= plot_vars[1].split("=")[1];
          aggregation_parameter= plot_vars[2].split("=")[1];
-
+ var data={};
+    data["plot_type"]=plot_vars[0].split("=")[1];
+    data ["x_prim_param"]=plot_vars[1].split("=")[1];
+    data["x_prim_bm"]=plot_vars[2].split("=")[1];
+    data["x_prim_bp"]=plot_vars[3].split("=")[1];
+    data["x_cat_param"]=plot_vars[4].split("=")[1];
+    data["y_am"]=plot_vars[5].split("=")[1];
+    data["y_ap"]=plot_vars[6].split("=")[1];
          $.ajax("/get_iframe", {
         method: 'POST',
-        data: {
-            'compare_parameter': compare_parameter,
-            'aggregation_method': aggregation_method,
-            'aggregation_parameter': aggregation_parameter
-        }
+        data:data
     }).done(function (data) {
-
-
-        $('#plot_container').append(data);
+        $('#plot_container').append('<div class="col-md-6 col-xs-6" style="padding:10px; ">'+data+'</div>');
     });
     }
 

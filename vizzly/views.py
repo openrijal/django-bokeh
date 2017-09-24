@@ -55,8 +55,8 @@ def index(request):
     is_loggedin = True if request.user.is_authenticated else False
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
-
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username}
+    plots = SavedPlot.objects.filter(user=request.user).order_by('-created_on')
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plots_count':plots.count()}
     return render(request, 'index.html', context)
 
 
