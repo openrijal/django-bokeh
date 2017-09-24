@@ -23,7 +23,7 @@ $(function () {
        selected_type=$(this).val();
        alert(selected_type);
        options="";
-       if(selected_type=="bar_plot" || selected_type=="line_plot")
+       if(selected_type=="bar" || selected_type=="line")
        {
             options+= '   <option value="MLG">MLG</option>';
              options+= '   <option value="RPR_DT">RPR DT</option>';
@@ -91,6 +91,7 @@ $("#formEWT").submit(function (e) {
         data["x_prim_bm"]="DATE";
         data["x_prim_bp"]="MONTH";
     }
+    data["x_cat_param"]=compareTypeEWT;
     data["y_am"]=aggregationTypeEWT;
     data["y_ap"]=""
     if(aggregationTypeEWT=="SUM")
