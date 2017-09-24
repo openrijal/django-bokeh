@@ -1,5 +1,6 @@
 $(function () {
     $('#sumColumnEWTGroup').hide();
+    $('#primary_param_div').hide();
 
     $('#btnClearAll').on('click', function () {
         console.log("Clearing....")
@@ -15,6 +16,27 @@ $(function () {
 
             }
         });
+    });
+
+
+    $('#plot_type').on('change', function () {
+       selected_type=$(this).val();
+       alert(selected_type);
+       options="";
+       if(selected_type=="bar_plot" || selected_type=="line_plot")
+       {
+            options+= '   <option value="MLG">MLG</option>';
+             options+= '   <option value="RPR_DT">RPR DT</option>';
+               $('#x_prim_param')
+          .append(options);
+          $('#primary_param_div').show();
+
+       }
+       else
+       {
+            $('#primary_param_div').hide();
+            $("#x_prim_param").val('')
+       }
     });
 
     // $('#btnSaveAll').on('click', function () {
@@ -52,6 +74,35 @@ $("#formEWT").submit(function (e) {
     var compareTypeEWT = $('#compareTypeEWT').val();
     var aggregationTypeEWT = $('#aggregationTypeEWT').val();
     var sumColumnEWT = $('#sumColumnEWT').val();
+    var plot_type=  $('#plot_type').val();
+    var prim_param= $('#x_prim_param').val();
+    var data={};
+    data["plot_type"]=plot_type;
+    data ["x_prim_param"]=prim_param;
+      data["x_prim_bm"]="";
+        data["x_prim_bp"]="";
+    if(prim_param=="MLG")
+    {
+        data["x_prim_bm"]="number";
+        data["x_prim_bp"]="1000";
+    }
+    else if (prim_param=="RPR_DT")
+    {
+        data["x_prim_bm"]="DATE";
+        data["x_prim_bp"]="MONTH";
+    }
+    data["y_am"]=aggregationTypeEWT;
+    data["y_ap"]=""
+    if(aggregationTypeEWT=="SUM")
+        data["y_ap"]=sumColumnEWT
+   alert(JSON.stringify(data));
+});
+
+/*$("#formEWT").submit(function (e) {
+    e.preventDefault();
+    var compareTypeEWT = $('#compareTypeEWT').val();
+    var aggregationTypeEWT = $('#aggregationTypeEWT').val();
+    var sumColumnEWT = $('#sumColumnEWT').val();
     $.ajax("/get_iframe", {
         method: 'POST',
         data: {
@@ -65,7 +116,7 @@ $("#formEWT").submit(function (e) {
         $('#btnSaveAll').removeClass('hide');
         $('#btnClearAll').removeClass('hide');
     });
-});
+});*/
 
 
 $("#filterIframeForm .form-control").change(function (e) {

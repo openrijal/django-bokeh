@@ -10,7 +10,8 @@
             class="glyphicon glyphicon-plus"></i> Add Plot</a>
     <a href="#" class="btn btn-raised btn-primary hide" data-toggle="modal" data-target="#savePlotModal"
        id="btnSaveAll"><i class="glyphicon glyphicon-save"></i> Save Canvas</a>
-    <a href="#" class="btn btn-raised btn-danger hide" id="btnClearAll"><i class="glyphicon glyphicon-remove"></i> Clear All</a>
+    <a href="#" class="btn btn-raised btn-danger hide" id="btnClearAll"><i class="glyphicon glyphicon-remove"></i> Clear
+        All</a>
 
 
     <div id="savePlotModal" class="modal fade" role="dialog">
@@ -69,7 +70,29 @@
                                                 <form action="#" method="POST" role="search" id="formEWT">
                                                     <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
-                                                          id="basic-addon1">Compare Type</span>
+                                                          id="basic-addon5">Plot Type</span>
+                                                        <select class="form-control" name="compare_parameter"
+                                                                id="plot_type">
+                                                            <option id="select" value="select">Select</option>
+                                                            <option id="bar_plot" value="bar_plot">BAR</option>
+                                                            <option id="line_plot" value="line_plot">LINE</option>
+                                                            <option id="pie_plot" value="pie_plot">PIE</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="input-group" style="padding-bottom: 10px"
+                                                         id="primary_param_div">
+                                                    <span class="input-group-addon"
+                                                          id="basic-addon6">Primary Parameter</span>
+                                                        <select class="form-control" name="compare_parameter"
+                                                                id="x_prim_param">
+
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="input-group" style="padding-bottom: 10px">
+                                                    <span class="input-group-addon"
+                                                          id="basic-addon2">Compare Type</span>
                                                         <select class="form-control" name="compare_parameter"
                                                                 id="compareTypeEWT">
                                                             <option value="RPR-DLR">RPR-DLR</option>
@@ -82,7 +105,7 @@
 
                                                     <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
-                                                          id="basic-addon1">Aggregation Type</span>
+                                                          id="basic-addon3">Aggregation Type</span>
                                                         <select class="form-control" name="aggregation_method"
                                                                 id="aggregationTypeEWT">
                                                             <option value="COUNT">COUNT</option>
@@ -125,7 +148,7 @@
                                                 <form action="" method="" role="search" id="formSQDF">
                                                     <div class="input-group" style="padding-bottom: 10px">
                                                     <span class=" input-group-addon "
-                                                          id="basic-addon2">Compare Type</span>
+                                                          id="basic-addon4">Compare Type</span>
                                                         <select class="form-control selectCompare"
                                                                 name="compareTypeSQDF"
                                                                 id="compareTypeSQDF">
@@ -184,6 +207,8 @@
         function resizeIframe(obj) {
             obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
         }
+
+
 
 </script>
 
