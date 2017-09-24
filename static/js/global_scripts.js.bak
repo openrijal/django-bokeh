@@ -71,6 +71,7 @@ $(function () {
 
 $("#formEWT").submit(function (e) {
     e.preventDefault();
+   e.preventDefault();
     var compareTypeEWT = $('#compareTypeEWT').val();
     var aggregationTypeEWT = $('#aggregationTypeEWT').val();
     var sumColumnEWT = $('#sumColumnEWT').val();
@@ -96,28 +97,16 @@ $("#formEWT").submit(function (e) {
     data["y_ap"]=""
     if(aggregationTypeEWT=="SUM")
         data["y_ap"]=sumColumnEWT
-   alert(JSON.stringify(data));
-});
-
-/*$("#formEWT").submit(function (e) {
-    e.preventDefault();
-    var compareTypeEWT = $('#compareTypeEWT').val();
-    var aggregationTypeEWT = $('#aggregationTypeEWT').val();
-    var sumColumnEWT = $('#sumColumnEWT').val();
     $.ajax("/get_iframe", {
         method: 'POST',
-        data: {
-            'compare_parameter': compareTypeEWT,
-            'aggregation_method': aggregationTypeEWT,
-            'aggregation_parameter': sumColumnEWT
-        }
+        data: data
     }).done(function (data) {
         $('#plot_container').append(data);
         $('#inputSelModal').modal('toggle');
         $('#btnSaveAll').removeClass('hide');
         $('#btnClearAll').removeClass('hide');
     });
-});*/
+});
 
 
 $("#filterIframeForm .form-control").change(function (e) {

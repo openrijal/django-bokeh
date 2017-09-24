@@ -21,14 +21,13 @@ $(function () {
 
     $('#plot_type').on('change', function () {
        selected_type=$(this).val();
-       alert(selected_type);
        options="";
        if(selected_type=="bar" || selected_type=="line")
        {
             options+= '   <option value="MLG">MLG</option>';
              options+= '   <option value="RPR_DT">RPR DT</option>';
-               $('#x_prim_param')
-          .append(options);
+               $('#x_prim_param').find('option').remove()
+               $('#x_prim_param').append(options);
           $('#primary_param_div').show();
 
        }
