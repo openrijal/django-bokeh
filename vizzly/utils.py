@@ -310,17 +310,14 @@ def create_pie_plot(input_json, filters):
     mypalette = viridis(numlines)
 
 
-<<<<<<< HEAD
     p = figure( title="Pie", width = 600, height = 600, x_range=(-1,1), y_range=(-1,1))
     for start, end, legend, color in zip(starts, ends, list(data.z), mypalette):
         p.wedge(x=0, y=0, radius=1, start_angle=start, end_angle=end, color=color, legend=legend)
 
 #    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
-=======
-    p = figure( title="Pie", width = 300, height = 300, x_range=(-1,1), y_range=(-1,1))
-    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
->>>>>>> aabe2dcdffbdba9b29805422d871953d9f7a20b6
-
+#    p = figure( title="Pie", width = 300, height = 300, x_range=(-1,1), y_range=(-1,1))
+#    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
+#
     p.xaxis.visible = False
     p.yaxis.visible = False
     #p.xaxis.axis_label = labels.x_label
