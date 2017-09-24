@@ -255,10 +255,10 @@ def get_iframe(request):
         y_ap = request.POST.get('y_ap') if 'y_ap' in request.POST else ''
         
         querystr = 'plot_type={0}&x_cat_param={1}&y_am={2}&y_ap={3}'.format(plot_type, x_cat_param, y_am, y_ap)
-        if plot_type == 'line':
+        if plot_type == 'line' or plot_type=='bar':
             x_prim_param = request.POST.get('x_prim_param') if 'x_prim_param' in request.POST else ''
             x_prim_bm = request.POST.get('x_prim_bm') if 'x_prim_bm' in request.POST else ''
-            querystr = '{0}&x_prim_param={1}&x_prim_bm={2}'.format(querystr, x_prim_bm, x_prim_bm)
+            querystr = '{0}&x_prim_param={1}&x_prim_bm={2}'.format(querystr, x_prim_param, x_prim_bm)
 
         if plot_type == 'bar':
             x_prim_bp = request.POST.get('x_prim_bp') if 'x_prim_bp' in request.POST else ''
