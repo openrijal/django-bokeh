@@ -299,7 +299,7 @@ def create_pie_plot(input_json, filters):
     request_json = json.loads(input_json)
     data = get_dataframe(json_to_sql(input_json, filters), False, True)
     #labels = get_plot_labels(input_json)
-    print(data.columns)
+    print(data.z)
     #pc = pandas.pivot_table(data, values='y',index='x',columns='z')
     vals = data['y']
     percents = [0]+list(vals.cumsum()/vals.sum())
@@ -311,7 +311,10 @@ def create_pie_plot(input_json, filters):
 
 
     p = figure( title="Pie", width = 600, height = 600, x_range=(-1,1), y_range=(-1,1))
-    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
+    for start, end, legend, color in zip(starts, ends, list(data.z), mypalette):
+        p.wedge(x=0, y=0, radius=1, start_angle=start, end_angle=end, color=color, legend=legend)
+
+#    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
 
     p.xaxis.visible = False
     p.yaxis.visible = False
