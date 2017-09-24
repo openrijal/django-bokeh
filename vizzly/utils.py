@@ -118,9 +118,9 @@ def json_to_sql_line(json_data, filters):
 
 
     if x_primary_binning == 'date':
-        x_primary = "STR_TO_DATE({0}, '%Y-%m-%d')".format(x_primary_param)
+        x_primary = "STR_TO_DATE(`{0}`, '%Y-%m-%d')".format(x_primary_param)
     elif x_primary_binning == 'number':
-        x_primary = "CAST({0} as signed integer)".format(x_primary_param)
+        x_primary = "CAST(`{0}` as signed integer)".format(x_primary_param)
 
     query = "SELECT {0} x, `{1}` z, {2} y FROM ewt WHERE {3} GROUP BY {0}, `{1}`".format(
         x_primary, x_categorical_param, agg_param, where_clause)
@@ -250,6 +250,7 @@ def create_line_plot(input_json, filters):
     request_json = json.loads(input_json)
     data = get_dataframe(json_to_sql(input_json, filters), False)
     labels = get_plot_labels(input_json)
+    print('Printing column names')
     print(data.columns)
     #pc = pandas.pivot_table(data, values='y',index='x',columns='z')
     pc = data
@@ -278,9 +279,11 @@ def create_line_plot(input_json, filters):
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
 
+    mytype = pc.index.dtype
     for (columnnames, colore) in zip(col, mypalette):
         if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_method') == 'date': 
-            xs = [datetime.strptime(date, fmt_str) for date in pc.index.values.tolist()]
+            #xs = [datetime.strptime(dt, fmt_str) for dt in pc.index.values.tolist()]
+            xs = pc.index.values.tolist()
             p.line(xs, pc[columnnames].tolist(),legend = columnnames,  color = colore )
         else:
             p.line(pc.index.values.tolist(), pc[columnnames].tolist(),legend = columnnames,  color = colore )
