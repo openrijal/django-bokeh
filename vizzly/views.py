@@ -11,6 +11,7 @@ from bokeh.embed import components
 from datetime import datetime
 
 import numpy as np
+from numpy import pi
 import pandas
 from django.utils.text import slugify
 from scipy.stats import gaussian_kde
@@ -131,7 +132,7 @@ def create_bar_plot(input_json):
 
 def create_line_plot(input_json):
     request_json = json.loads(input_json)
-    data = get_raw_dataframe(json_to_sql(input_json))
+    data = get_dataframe(json_to_sql(input_json), False)
     labels = get_plot_labels(input_json)
     print(data.columns)
     #pc = pandas.pivot_table(data, values='y',index='x',columns='z')
@@ -178,6 +179,39 @@ def create_line_plot(input_json):
     return p
 
 
+def create_pie_plot(input_json):
+    request_json = json.loads(input_json)
+    data = get_raw_dataframe(json_to_sql(input_json))
+    #labels = get_plot_labels(input_json)
+    print(data.columns)
+    #pc = pandas.pivot_table(data, values='y',index='x',columns='z')
+    vals = data['y']
+    percents = [0]+list(vals.cumsum()/vals.sum())
+    starts = [p*2*pi for p in percents[:-1]]
+    ends = [p*2*pi for p in percents[1:]]
+
+    numlines = len(data.index)
+    mypalette = viridis(numlines)
+
+
+    p = figure( title="Pie", width = 600, height = 600, x_range=(-1,1), y_range=(-1,1))
+    p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
+
+    #p.xaxis.axis_label = labels.x_label
+    #p.yaxis.axis_label = labels.y_label
+    p.title.align = 'center'
+
+
+    
+   # hover = HoverTool(tooltips=[
+   #                     (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
+   #                                     (labels.y_label, "@y_axis_data"),
+   #                                                 ])
+    
+    #source = ColumnDataSource(data=dict(x_axis_data=x_axis_data, y_axis_data=y_axis_data))
+    return p
+
+
 
 def create_figure_from_json(input_json):
 
@@ -185,10 +219,10 @@ def create_figure_from_json(input_json):
 
     if request_json.get('plot_parameters').get('plot_type') == "bar":
         return create_bar_plot(input_json)
-
-    if request_json.get('plot_parameters').get('plot_type') == "line":
+    elif request_json.get('plot_parameters').get('plot_type') == "line":
         return create_line_plot(input_json)
-
+    elif request_json.get('plot_parameters').get('plot_type') == "pie":
+        return create_pie_plot(input_json)
 
 
 def update_figure(request):
