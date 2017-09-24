@@ -186,7 +186,7 @@ def update_plot(request):
             })
 
         if x_prim_bp:
-            binning_param = x_prim_bm
+            binning_param = x_prim_bp
  #       if freq:
  #           pass_freq = freq
             
