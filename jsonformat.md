@@ -78,6 +78,28 @@ Example 3
 
 ```
 
+
+```javascript
+
+{
+	"plot_parameters":{
+		"plot_type": "pie",
+		"x_axis":{
+			"categorical":{
+				"parameter": "BDY MDL"
+			}
+		},
+		"y_axis":{
+			"aggregation_method": "SUM",
+			"aggregation_parameter" : "AMOUNT(USD)"
+		},
+		"filters":[
+		]
+	}
+}
+
+```
+
 * ### *plot_type*
 The Type of plot to be generated.
 
