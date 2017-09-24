@@ -3,3 +3,135 @@
         right: 1.5em;
         bottom: 1.5em;
 }
+
+.container
+{
+    width:100%;
+}
+
+.full-width {
+    display:block;
+    background-color:rgb(246,139,29);
+    padding-top:10px;
+    padding-bottom:10px;
+     margin-top:10px;
+    margin-bottom:10px;
+
+}
+
+.form-login {
+    background-color: rgb(246,139,29);
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 15px;
+    border-color:#d2d2d2;
+    border-width: 5px;
+    box-shadow:0 1px 0 #cfcfcf;
+
+}
+
+h4 {
+ border:0 solid #fff;
+ border-bottom-width:1px;
+ padding-bottom:10px;
+ text-align: center;
+ color: white;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.info-box {
+	display: block;
+	min-height: 90px;
+	background: #fff;
+	width: 100%;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+	border-top-left-radius: 12px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 12px;
+	margin-bottom: 5px
+	border-color: #e7e7e7;
+	padding-bottom:5px;
+}
+
+.info-box-small {
+	display: block;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+	border-top-left-radius: 12px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 12px;
+	margin-bottom: 10px !important;
+	border-color: #e7e7e7;
+
+}
+
+.info-box-icon {
+	border-top-left-radius: 12px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 12px;
+	display: block;
+	float: left;
+	height: 90px;
+	width: 90px;
+	text-align: center;
+	font-size: 45px;
+	line-height: 90px;
+	background: rgba(0,0,0,0.2);
+	padding-bottom:5px;
+}
+
+
+.info-box-icon-small {
+	border-top-left-radius: 12px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 12px;
+	display: block;
+	float: left;
+	height: 30px;
+	text-align: center;
+	font-size: 45px;
+	line-height: 90px;
+	background: rgba(0,0,0,0.2);
+	padding:10px;
+}
+.info-box-icon > img {
+	max-width: 100%
+}
+.info-box-content {
+	padding: 5px 10px;
+	margin-left: 90px
+}
+
+.index_content
+{
+padding-left: 20px;
+padding-top: 10px;
+align: center
+}
+
+
+.bg-green {
+	background-color: #e7e7e7 !important
+}
+
+
+.hr-panel-head
+{
+background-color: rgb(246,139,29) !important ;
+border-color: rgb(246,139,29) !important;
+}
+
+

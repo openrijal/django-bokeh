@@ -37,14 +37,6 @@
     }
 
 
-
-
-
-
-
-
-
-
     </style>
     <link rel="shortcut icon" href="/static/favicon.ico">
 
@@ -59,7 +51,6 @@
                     <img alt="HRForecast" src="/static/img/HRForecast_Logo.svg">
                 </a>
             </div>
-            {% if is_loggedin %}
             <div class="navbar-collapse collapse navbar-responsive-collapse">
                 <ul class="nav navbar-nav">
                     <li>
@@ -68,8 +59,7 @@
                             <span class="glyphicon glyphicon-menu-hamburger"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <!--<li><a href="/single/">Single Case Warranty Analysis</a></li>-->
-                            <li><a href="#">Single Case Warranty Analysis</a></li>
+                            <li><a href="/single/">Single Case Warranty Analysis</a></li>
                             <li><a href="/global/">Global Warranty Analysis</a></li>
                         </ul>
                     </li>
@@ -77,29 +67,13 @@
                 {% block actions %}
 
                 {% endblock %}
-                <ul class="nav navbar-nav navbar-right" style="margin-left:20px">
-                    {% if is_admin %}
-                    <li><a href="~admin/">Administration</a></li>
-                    {% endif %}
-                    <a href="/logout/" title="Logout">
-                        <span class="glyphicon glyphicon-log-out"
-                              style="margin-top: 16px;color:rgb(246,139,29)"></span>
-                    </a>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <a href="/" title="Home">
-                        <span class="glyphicon glyphicon-home"
-                              style="margin-top: 16px;color:rgb(246,139,29)"></span>
-                    </a>
-                </ul>
+
                 <div class="navbar-header navbar-right">
                     <a class="navbar-brand" href="https://www.continental-corporation.com/en" target="_blank">
                         <img alt="Continental" src="/static/img/Continental-Logo.svg">
                     </a>
                 </div>
-
             </div>
-            {% endif %}
         </nav>
     </nav>
 </div>
@@ -121,9 +95,8 @@
 <script src="/static/js/global_scripts.js"></script>
 <script type="text/javascript" src="/static/js/bokeh-0.12.9.min.js"></script>
 
-<link href="/static/css/bokeh-widgets-0.12.9.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-<script src="/static/js/bokeh-widgets-0.12.9.js"></script>
+{#<link href="/static/css/bokeh-widgets-0.12.9.css" rel="stylesheet">#}
+{#<script src="/static/js/bokeh-widgets-0.12.9.js"></script>#}
 
 {% block extras %}
 {% endblock %}

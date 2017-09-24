@@ -1,42 +1,87 @@
-{% extends 'base.html' %}
+{% load manipulators %}
 
-{% block title %}Welcome, {{ username }}{% endblock %}
+<html>
+<head>
+    <title>Plots</title>
 
-{% block actions %}
-<form class="navbar-form navbar-left" method="GET" action="" role="search">
-  <div class="input-group">
-    <input type="text" class="form-control input-lg" placeholder="VIN" name="vin">
-  </div>
-  <button type="submit" class="btn btn-raised btn-warning btn-sm">
-    <span class="glyphicon glyphicon-menu-right"></span>
-  </button>
-</form>
-{% if is_loggedin %}
-<ul class="nav navbar-nav navbar-right">
-  {% if is_admin %}
-  <li><a href="~admin/">Administration</a></li>
-  {% endif %}
-  <li><a href="/logout/">Logout</a></li>
-</ul>
-{% else %}
-<ul class="nav navbar-nav navbar-right">
-  <li><a href="/login/">Login</a></li>
-</ul>
-{% endif %}
-{% endblock %}
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
-{% block content %}
-  <div class="row">
-    {% if plot_available %}
-    {% for div in divs %}
-    <div class="col-md-6">
-      {{ div|safe }}
-    </div>
-    {% endfor %}
-    {% endif %}
-  </div>
-{% endblock %}
+    <!-- Bokeh Specific -->
+    <link rel="stylesheet" href="/static/css/bokeh-0.12.9.min.css" type="text/css"/>
 
-{% block extras %}
-    {{ script|safe }}
-{% endblock %}
+    <!-- custom css -->
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/submenu.css" rel="stylesheet">
+    <link href="/static/css/navbar.css" rel="stylesheet">
+    <style>
+        .bk-root .bk-ui-widget-content {
+            background-image: none !important;
+            background-color: #ff9900 !important;
+        }
+
+        .bk-root .bk-ui-slider-vertical .bk-ui-slider-handle {
+            left: -0.24em !important;
+            margin-left: 0;
+            margin-bottom: -0.6em;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #7f7f7f;
+            background-color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+<div class="col-md-12">
+    <form class="form-inline" id="filterIframeForm"
+          action="/update_plot?compare_parameter={{ cp }}&aggregation_method={{ am }}&aggregation_parameter={{ ap }}"
+          method="post">
+        <input type="hidden" id="filFrmDefault" name="default_filters" value="compare_parameter={{ cp }}&aggregation_method={{ am }}&aggregation_parameter={{ ap }}">
+
+        <div class="input-group col-md-2">
+            <span class="input-group-addon" id="basic-addon1">ENG</span>
+            <input type="text" class="form-control" name="eng" id="filFrmEng"
+                   value="{{ eng }}" placeholder="something..."/>
+
+        </div>
+        <div class="input-group col-md-2">
+            <span class="input-group-addon" id="basic-addon2">TRAN</span>
+           <input type="text" class="form-control" name="tran" id="filFrmTran"
+                   value="{{ tran }}" placeholder="something..."/>
+
+        </div>
+         <div class="input-group col-md-2">
+            <span class="input-group-addon" id="basic-addon3">MILES</span>
+            <input type="text" class="form-control" name="miles" id="filFrmMiles"
+                   value="{{ miles }}" placeholder="something..."/>
+
+        </div>
+
+        <div class="input-group col-md-2">
+             <span class="input-group-addon" id="basic-addon4">Frequency</span>
+            <select class="form-control" name="freq" id="filFrmFreq">
+                <option value="DAY" {% if freq == 'DAY' %}selected{% endif %}>DAY</option>
+                <option value="MONTH" {% if freq == 'MONTH' %}selected{% endif %}>MONTH</option>
+                <option value="QUARTER" {% if freq == 'QUARTER' %}selected{% endif %}>QUARTER</option>
+            </select>
+        </div>
+    </form>
+</div>
+<div class="col-md-12">
+    {{ div|safe }}
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/global_scripts.js"></script>
+<script type="text/javascript" src="/static/js/bokeh-0.12.9.min.js"></script>
+
+{{ script|safe }}
+
+</body>
+</html>
