@@ -226,7 +226,7 @@ def create_bar_plot(input_json, filters):
                         (','.join(labels.x_label.rsplit('-', 1)[::-1]), "@x_axis_data"),
                                         (labels.y_label, "@y_axis_data"),
                                                     ])
-    p = figure(x_range=FactorRange(*x_axis_data), plot_width=1200, plot_height=600,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
+    p = figure(x_range=FactorRange(*x_axis_data), plot_width=600, plot_height=300,title=labels.title, tools=[hover, 'pan', 'box_zoom'])
     #p.x_range = FactorRange(*x_axis_data)
     
     p.vbar(x='x_axis_data', top='y_axis_data', width=1, source=source, line_color="white",
@@ -257,16 +257,16 @@ def create_line_plot(input_json, filters):
     col = []
     [col.append(i) for i in pc.columns]
 
-    p = figure( title=labels.title, width = 1200, height = 600)
+    p = figure( title=labels.title, width = 600, height = 300)
 
     if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_method') == 'date': 
-        p = figure( x_axis_type = "datetime", title=labels.title, width = 1200, height = 600)
+        p = figure( x_axis_type = "datetime", title=labels.title, width = 600, height = 300)
         if request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_param') == 'DAY':
             fmt_str = '%Y-%m-%d'
         elif request_json.get('plot_parameters').get('x_axis').get('primary').get('binning_param') == 'MONTH':
             fmt_str= '%Y-%m'
     else:
-        p = figure( title=labels.title, width = 1200, height = 600)
+        p = figure( title=labels.title, width = 600, height = 300)
 
     p.xaxis.axis_label = labels.x_label
     p.yaxis.axis_label = labels.y_label
@@ -308,7 +308,7 @@ def create_pie_plot(input_json, filters):
     mypalette = viridis(numlines)
 
 
-    p = figure( title="Pie", width = 600, height = 600, x_range=(-1,1), y_range=(-1,1))
+    p = figure( title="Pie", width = 300, height = 300, x_range=(-1,1), y_range=(-1,1))
     p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
 
     #p.xaxis.axis_label = labels.x_label
