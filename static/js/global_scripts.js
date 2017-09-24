@@ -88,7 +88,7 @@ $("#formEWT").submit(function (e) {
     }
     else if (prim_param=="REPAIR-DT")
     {
-        data["x_prim_bm"]="DATE";
+        data["x_prim_bm"]="date";
         data["x_prim_bp"]="MONTH";
     }
     data["x_cat_param"]=compareTypeEWT;
