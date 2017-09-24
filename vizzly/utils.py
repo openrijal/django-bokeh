@@ -48,11 +48,11 @@ def date_binning(time_scale, date_param):
         mt = "MONTH({0})".format(dt_obj)
         dt = "CONCAT(CAST({0} AS CHAR(4)),'-', CAST({1} AS CHAR(4)))".format(yr, mt)
 
-    return dt
+    return dt, dt_obj
 
 
 def number_binning(bin_size, number_param):
-    return "CONCAT( FLOOR(`{0}`/{1})*{1}, ' - ', CEIL(`{0}`/{1})*{1})".format(number_param, bin_size)
+    return "CONCAT( FLOOR(`{0}`/{1})*{1}, ' - ', CEIL(`{0}`/{1})*{1})".format(number_param, bin_size), 'FLOOR(`{0}`/{1})*{1}'.format(number_param, bin_size)
 
 
 
@@ -82,12 +82,12 @@ def json_to_sql_bar(json_data, filters):
 
 
     if x_primary_binning == 'date' and x_primary_binning_param:
-        x_primary =  date_binning(x_primary_binning_param, x_primary_param)
+        x_primary, order_clause =  date_binning(x_primary_binning_param, x_primary_param)
     elif x_primary_binning == 'number' and x_primary_binning_param:
-        x_primary = number_binning(x_primary_binning_param, x_primary_param)
+        x_primary, order_clause = number_binning(x_primary_binning_param, x_primary_param)
 
-    query = "SELECT {0} x, `{1}` z, {2} y FROM ewt WHERE {3} GROUP BY {0}, `{1}`".format(
-        x_primary, x_categorical_param, agg_param, where_clause)
+    query = "SELECT {0} x, `{1}` z, {2} y FROM ewt WHERE {3} GROUP BY {0}, `{1}` order by {4}".format(
+        x_primary, x_categorical_param, agg_param, where_clause, order_clause)
 
     print(query)
     return query
@@ -213,6 +213,7 @@ def get_plot_labels(json_data):
 
 def create_bar_plot(input_json, filters):
     data = get_dataframe(json_to_sql(input_json, filters))
+    print(data.index.tolist())
     labels = get_plot_labels(input_json)
     columns = data.columns.tolist()
     columns.remove('x')
@@ -235,6 +236,7 @@ def create_bar_plot(input_json, filters):
     
     p.y_range.start = 0
     p.x_range.range_padding = 0.1
+    #p.x_range = FactorRange(factors=data['x'].tolist())
     p.xaxis.major_label_orientation = 1
     p.xgrid.grid_line_color = None
     p.xaxis.axis_label = labels.x_label
@@ -311,6 +313,8 @@ def create_pie_plot(input_json, filters):
     p = figure( title="Pie", width = 600, height = 600, x_range=(-1,1), y_range=(-1,1))
     p.wedge(x=0, y=0, radius=1, start_angle=starts, end_angle=ends, color=mypalette)
 
+    p.xaxis.visible = False
+    p.yaxis.visible = False
     #p.xaxis.axis_label = labels.x_label
     #p.yaxis.axis_label = labels.y_label
     p.title.align = 'center'
