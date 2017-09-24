@@ -86,7 +86,7 @@ $("#formEWT").submit(function (e) {
         data["x_prim_bm"]="number";
         data["x_prim_bp"]="1000";
     }
-    else if (prim_param=="RPR_DT")
+    else if (prim_param=="REPAIR-DT")
     {
         data["x_prim_bm"]="DATE";
         data["x_prim_bp"]="MONTH";
