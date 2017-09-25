@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome, {{ username }}{% endblock %}
+
+{% block actions %}
+<form class="navbar-form navbar-left" method="GET" action="" role="search">
+  <div class="input-group">
+    <input type="text" class="form-control input-lg" placeholder="VIN" name="vin">
+  </div>
+  <button type="submit" class="btn btn-raised btn-warning btn-sm">
+    <span class="glyphicon glyphicon-menu-right"></span>
+  </button>
+</form>
+{% if is_loggedin %}
+<ul class="nav navbar-nav navbar-right">
+  {% if is_admin %}
+  <li><a href="~admin/">Administration</a></li>
+  {% endif %}
+  <li><a href="/logout/">Logout</a></li>
+</ul>
+{% else %}
+<ul class="nav navbar-nav navbar-right">
+  <li><a href="/login/">Login</a></li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    {% if plot_available %}
+    {% for div in divs %}
+    <div class="col-md-6">
+      {{ div|safe }}
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extras %}
+    {{ script|safe }}
+{% endblock %}

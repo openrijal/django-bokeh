@@ -50,7 +50,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title">
-                                    Configure Plot
+                                    Choose Suitable Plot
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
 
                                 </h3>
@@ -59,9 +59,11 @@
                                 <div id="accordion" class="panel-group">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
+                                            <h4 class="panel-title">
                                                 <a data-toggle="collapse" data-parent="#accordion"
-                                                   href="#collapseOne" class="panel-title">EWT<i
-                                                        class="glyphicon glyphicon-forward pull-right "></i></a>
+                                                   href="#collapseOne">EWT<i
+                                                        class="glyphicon glyphicon-forward pull-right"></i></a>
+                                            </h4>
                                         </div>
                                         <div id="collapseOne" class="panel-collapse collapse">
                                             <div class="panel-body">
@@ -72,16 +74,16 @@
                                                         <select class="form-control" name="compare_parameter"
                                                                 id="plot_type">
                                                             <option id="select" value="select">Select</option>
-                                                            <option id="bar" value="bar">BAR</option>
-                                                            <option id="line" value="line">LINE</option>
-                                                            <option id="pie" value="pie">PIE</option>
+                                                            <option id="bar_plot" value="bar_plot">BAR</option>
+                                                            <option id="line_plot" value="line_plot">LINE</option>
+                                                            <option id="pie_plot" value="pie_plot">PIE</option>
                                                         </select>
                                                     </div>
 
                                                     <div class="input-group" style="padding-bottom: 10px"
                                                          id="primary_param_div">
                                                     <span class="input-group-addon"
-                                                          id="basic-addon6">X-Axis</span>
+                                                          id="basic-addon6">Primary Parameter</span>
                                                         <select class="form-control" name="compare_parameter"
                                                                 id="x_prim_param">
 
@@ -90,7 +92,7 @@
 
                                                     <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
-                                                          id="basic-addon2">Compare By</span>
+                                                          id="basic-addon2">Compare Type</span>
                                                         <select class="form-control" name="compare_parameter"
                                                                 id="compareTypeEWT">
                                                             <option value="RPR-DLR">RPR-DLR</option>
@@ -115,7 +117,7 @@
                                                          id="sumColumnEWTGroup"
                                                          style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
-                                                          id="basic-addon">Aggregation Column</span>
+                                                          id="basic-addon">Column</span>
                                                         <select class="form-control" name="aggregation_parameter"
                                                                 id="sumColumnEWT">
                                                             <option value="AMOUNT(USD)">AMOUNT(USD)</option>
@@ -135,9 +137,11 @@
                                     </div>
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
+                                            <h4 class="panel-title">
                                                 <a data-toggle="collapse" data-parent="#accordion"
-                                                   href="#collapseTwo" class="panel-title">SQDF<i
+                                                   href="#collapseTwo">SQDF<i
                                                         class="glyphicon glyphicon-forward pull-right"></i></a>
+                                            </h4>
                                         </div>
                                         <div id="collapseTwo" class="panel-collapse collapse">
                                             <div class="panel-body">
