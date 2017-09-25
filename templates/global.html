@@ -3,177 +3,179 @@
 {% block title %}Welcome, {{ username }}{% endblock %}
 
 {% block content %}
-<div class="col-md-12">
-    <a href="../list_plots" class="btn btn-raised btn-success " data-target="#inputSelModal"><i
-            class="glyphicon glyphicon-plus"></i> Saved Canvases</a>
-    <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#inputSelModal"><i
-            class="glyphicon glyphicon-plus"></i> Add Plot</a>
-    <a href="#" class="btn btn-raised btn-primary hide" data-toggle="modal" data-target="#savePlotModal"
-       id="btnSaveAll"><i class="glyphicon glyphicon-save"></i> Save Canvas</a>
-    <a href="#" class="btn btn-raised btn-danger hide" id="btnClearAll"><i class="glyphicon glyphicon-remove"></i> Clear
-        All</a>
+    <div class="col-md-12">
+        <a href="../list_plots" class="btn btn-raised btn-success " data-target="#inputSelModal"><i
+                class="glyphicon glyphicon-plus"></i> Saved Canvases</a>
+        <a href="#" class="btn btn-raised btn-warning " data-toggle="modal" data-target="#inputSelModal"><i
+                class="glyphicon glyphicon-plus"></i> Add Plot</a>
+        <a href="#" class="btn btn-raised btn-primary hide" data-toggle="modal" data-target="#savePlotModal"
+           id="btnSaveAll"><i class="glyphicon glyphicon-save"></i> Save Canvas</a>
+        <a href="#" class="btn btn-raised btn-danger hide" id="btnClearAll"><i class="glyphicon glyphicon-remove"></i>
+            Clear
+            All</a>
 
 
-    <div id="savePlotModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="/save_session/" method="POST" id="savePlotInput">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Save Your Plot</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="input-group" style="padding-bottom: 10px">
-                            <label for="canvas_name">Canvas Name:</label>
-                            <input type="text" id="canvasName" name="canvas_name" class="form-control">
+        <div id="savePlotModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/save_session/" method="POST" id="savePlotInput">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Save Your Plot</h4>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-raised btn-primary">
-                            <i class="glyphicon glyphicon-save"></i> Save Canvas
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Modal -->
-    <div id="inputSelModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">
-                                    Configure Plot
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-
-                                </h3>
+                        <div class="modal-body">
+                            <div class="input-group" style="padding-bottom: 10px">
+                                <label for="canvas_name">Canvas Name:</label>
+                                <input type="text" id="canvasName" name="canvas_name" class="form-control">
                             </div>
-                            <div class="panel-body">
-                                <div id="accordion" class="panel-group">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-raised btn-primary">
+                                <i class="glyphicon glyphicon-save"></i> Save Canvas
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="inputSelModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Configure Plot
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                    </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="accordion" class="panel-group">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
                                                 <a data-toggle="collapse" data-parent="#accordion"
                                                    href="#collapseOne" class="panel-title">EWT<i
                                                         class="glyphicon glyphicon-forward pull-right "></i></a>
-                                        </div>
-                                        <div id="collapseOne" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <form action="#" method="POST" role="search" id="formEWT">
-                                                    <div class="input-group" style="padding-bottom: 10px">
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <form action="#" method="POST" role="search" id="formEWT">
+                                                        <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon5">Plot Type</span>
-                                                        <select class="form-control" name="compare_parameter"
-                                                                id="plot_type">
-                                                            <option id="select" value="select">Select</option>
-                                                            <option id="bar" value="bar">BAR</option>
-                                                            <option id="line" value="line">LINE</option>
-                                                            <option id="pie" value="pie">PIE</option>
-                                                        </select>
-                                                    </div>
+                                                            <select class="form-control" name="compare_parameter"
+                                                                    id="plot_type">
+                                                                <option id="select" value="select">Select</option>
+                                                                <option id="bar" value="bar">BAR</option>
+                                                                <option id="line" value="line">LINE</option>
+                                                                <option id="pie" value="pie">PIE</option>
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="input-group" style="padding-bottom: 10px"
-                                                         id="primary_param_div">
+                                                        <div class="input-group" style="padding-bottom: 10px"
+                                                             id="primary_param_div">
                                                     <span class="input-group-addon"
                                                           id="basic-addon6">X-Axis</span>
-                                                        <select class="form-control" name="compare_parameter"
-                                                                id="x_prim_param">
+                                                            <select class="form-control" name="compare_parameter"
+                                                                    id="x_prim_param">
 
-                                                        </select>
-                                                    </div>
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="input-group" style="padding-bottom: 10px">
+                                                        <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon2">Compare By</span>
-                                                        <select class="form-control" name="compare_parameter"
-                                                                id="compareTypeEWT">
-                                                            <option value="RPR-DLR">RPR-DLR</option>
-                                                            <option value="BDY MDL">BDY-MDL</option>
-                                                            <option value="PART NO">PART</option>
-                                                            <option value="ENG">ENG</option>
-                                                            <option value="TRAN">TRAN</option>
-                                                        </select>
-                                                    </div>
+                                                            <select class="form-control" name="compare_parameter"
+                                                                    id="compareTypeEWT">
+                                                                <option value="RPR-DLR">RPR-DLR</option>
+                                                                <option value="BDY MDL">BDY-MDL</option>
+                                                                <option value="PART NO">PART</option>
+                                                                <option value="ENG">ENG</option>
+                                                                <option value="TRAN">TRAN</option>
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="input-group" style="padding-bottom: 10px">
+                                                        <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon3">Aggregation Type</span>
-                                                        <select class="form-control" name="aggregation_method"
-                                                                id="aggregationTypeEWT">
-                                                            <option value="COUNT">COUNT</option>
-                                                            <option value="SUM">SUM</option>
-                                                        </select>
-                                                    </div>
+                                                            <select class="form-control" name="aggregation_method"
+                                                                    id="aggregationTypeEWT">
+                                                                <option value="COUNT">COUNT</option>
+                                                                <option value="SUM">SUM</option>
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="input-group sumColumnEWTGroup"
-                                                         id="sumColumnEWTGroup"
-                                                         style="padding-bottom: 10px">
+                                                        <div class="input-group sumColumnEWTGroup"
+                                                             id="sumColumnEWTGroup"
+                                                             style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon">Aggregation Column</span>
-                                                        <select class="form-control" name="aggregation_parameter"
-                                                                id="sumColumnEWT">
-                                                            <option value="AMOUNT(USD)">AMOUNT(USD)</option>
+                                                            <select class="form-control" name="aggregation_parameter"
+                                                                    id="sumColumnEWT">
+                                                                <option value="AMOUNT(USD)">AMOUNT(USD)</option>
 
-                                                        </select>
-                                                    </div>
-                                                    <br>
+                                                            </select>
+                                                        </div>
+                                                        <br>
 
 
-                                                    <button type="submit" id="btnSubmitEWT"
-                                                            class="btn btn-raised btn-warning ">Add
-                                                        Plot
-                                                    </button>
-                                                </form>
+                                                        <button type="submit" id="btnSubmitEWT"
+                                                                class="btn btn-raised btn-warning ">Add
+                                                            Plot
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
                                                 <a data-toggle="collapse" data-parent="#accordion"
                                                    href="#collapseTwo" class="panel-title">SQDF<i
                                                         class="glyphicon glyphicon-forward pull-right"></i></a>
-                                        </div>
-                                        <div id="collapseTwo" class="panel-collapse collapse">
-                                            <div class="panel-body">
-                                                <form action="" method="" role="search" id="formSQDF">
-                                                    <div class="input-group" style="padding-bottom: 10px">
+                                            </div>
+                                            <div id="collapseTwo" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <form action="" method="" role="search" id="formSQDF">
+                                                        <div class="input-group" style="padding-bottom: 10px">
                                                     <span class=" input-group-addon "
                                                           id="basic-addon4">Compare Type</span>
-                                                        <select class="form-control selectCompare"
-                                                                name="compareTypeSQDF"
-                                                                id="compareTypeSQDF">
-                                                            <option value="RPR-DLR">RPR-DLR</option>
-                                                            <option value="BDY MDL">BDY MDL</option>
-                                                            <option value="PART NO">PART NO</option>
-                                                            <option value="ENG">ENG</option>
-                                                            <option value="TRAN">TRAN</option>
-                                                        </select>
-                                                    </div>
+                                                            <select class="form-control selectCompare"
+                                                                    name="compareTypeSQDF"
+                                                                    id="compareTypeSQDF">
+                                                                <option value="RPR-DLR">RPR-DLR</option>
+                                                                <option value="BDY MDL">BDY MDL</option>
+                                                                <option value="PART NO">PART NO</option>
+                                                                <option value="ENG">ENG</option>
+                                                                <option value="TRAN">TRAN</option>
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="input-group" style="padding-bottom: 10px">
+                                                        <div class="input-group" style="padding-bottom: 10px">
                                                     <span class="input-group-addon"
                                                           id="basic-addon1 selectAggregate">Aggregation Type</span>
-                                                        <select class="form-control" id="selectEWTAggregate"
-                                                                name="aggregationTypeSQDF"
-                                                                id="aggregationTypeSQDF">
-                                                            <option value="COUNT">COUNT</option>
-                                                            <option value="SUM">SUM</option>
-                                                        </select>
-                                                    </div>
-                                                    <br>
+                                                            <select class="form-control" id="selectEWTAggregate"
+                                                                    name="aggregationTypeSQDF"
+                                                                    id="aggregationTypeSQDF">
+                                                                <option value="COUNT">COUNT</option>
+                                                                <option value="SUM">SUM</option>
+                                                            </select>
+                                                        </div>
+                                                        <br>
 
 
-                                                    <button type="button" id="btnSubmitSQDF"
-                                                            class="btn btn-raised btn-warning ">Add
-                                                        Plot
-                                                    </button>
-                                                </form>
+                                                        <button type="button" id="btnSubmitSQDF"
+                                                                class="btn btn-raised btn-warning ">Add
+                                                            Plot
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -181,31 +183,29 @@
                             </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-raised btn-warning " data-dismiss="modal">Close</button>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-raised btn-warning " data-dismiss="modal">Close</button>
-                </div>
+
             </div>
 
         </div>
-
+        <hr/>
     </div>
-    <hr/>
-</div>
 
-<div id="plot_container" class="col-md-12"></div>
+    <div id="plot_container" class="col-md-12"></div>
 
 {% endblock %}
 
 {% block extras %}
 
-<script>
+    <script>
         function resizeIframe(obj) {
             obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
         }
 
 
-
-</script>
+    </script>
 
 {% endblock %}

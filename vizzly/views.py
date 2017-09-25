@@ -56,7 +56,7 @@ def index(request):
     is_admin = True if request.user.is_superuser else False
     username = request.user.username
     plots = SavedPlot.objects.filter(user=request.user).order_by('-created_on')
-    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plots_count':plots.count()}
+    context = {'is_loggedin': is_loggedin, 'is_admin': is_admin, 'username': username, 'plots_count': plots.count()}
     return render(request, 'index.html', context)
 
 
@@ -126,13 +126,12 @@ def view_global_ewt(request):
 @login_required(login_url='/login/')
 @csrf_exempt
 def update_plot(request):
-    
-#   compare_param = request.GET.get('compare_parameter') if 'compare_parameter' in request.GET else ''
-#   agg_method = request.GET.get('aggregation_method') if 'aggregation_method' in request.GET else ''
-#   agg_param = request.GET.get('aggregation_parameter') if 'aggregation_parameter' in request.GET else ''
-    
+    #   compare_param = request.GET.get('compare_parameter') if 'compare_parameter' in request.GET else ''
+    #   agg_method = request.GET.get('aggregation_method') if 'aggregation_method' in request.GET else ''
+    #   agg_param = request.GET.get('aggregation_parameter') if 'aggregation_parameter' in request.GET else ''
+
     plot_type = request.GET.get('plot_type') if 'plot_type' in request.GET else 'pie'
-        
+
     # Common parameters
     x_cat_param = request.GET.get('x_cat_param') if 'x_cat_param' in request.GET else ''
     y_am = request.GET.get('y_am') if 'y_am' in request.GET else ''
@@ -140,9 +139,9 @@ def update_plot(request):
     x_prim_param = request.GET.get('x_prim_param') if 'x_prim_param' in request.GET else ''
     x_prim_bm = request.GET.get('x_prim_bm') if 'x_prim_bm' in request.GET else ''
     x_prim_bp = request.GET.get('x_prim_bp') if 'x_prim_bp' in request.GET else ''
-    
+
     filter_data = list()
-#    pass_freq = 'MONTH'
+    #    pass_freq = 'MONTH'
 
     layouts_session = list(request.session.get('session_layouts')) if 'session_layouts' in request.session else list()
 
@@ -152,14 +151,13 @@ def update_plot(request):
         binning_param = "MONTH"
     elif x_prim_bm == 'number':
         binning_param = "1000"
-    
 
     if request.POST:
         eng = request.POST.get('eng') if 'eng' in request.POST else ''
         tran = request.POST.get('tran') if 'tran' in request.POST else ''
         miles = request.POST.get('miles') if 'miles' in request.POST else ''
         x_prim_bp = request.POST.get('x_prim_bp') if 'x_prim_bp' in request.POST else ''
- #       freq = request.POST.get('freq') if 'freq' in request.POST else ''
+        #       freq = request.POST.get('freq') if 'freq' in request.POST else ''
 
         if eng:
             filter_data.append({
@@ -187,45 +185,45 @@ def update_plot(request):
 
         if x_prim_bp:
             binning_param = x_prim_bp
- #       if freq:
- #           pass_freq = freq
-            
+            #       if freq:
+            #           pass_freq = freq
+
     json_data = '''
     
-      {
-	"plot_parameters":{
-		"plot_type": "%s",
-		"x_axis":{
-			"primary" :{
-				"parameter": "%s",
-				"binning_method": "%s",
-				"binning_param" : "%s"
-			},
-			"categorical":{
-				"parameter": "%s"
-			}
-		},
-		"y_axis":{
-			"aggregation_method": "%s",
-			"aggregation_parameter" : "%s"
-		},
-		"filters":[
-		]
-	}
-}                         
-    ''' % (plot_type, x_prim_param, x_prim_bm, binning_param, x_cat_param, y_am, y_ap)
+    {
+        "plot_parameters":{
+            "plot_type": "%s",
+            "x_axis":{
+                "primary" :{
+                    "parameter": "%s",
+                    "binning_method": "%s",
+                    "binning_param" : "%s"
+                },
+                "categorical":{
+                    "parameter": "%s"
+                }
+            },
+            "y_axis":{
+                "aggregation_method": "%s",
+                "aggregation_parameter" : "%s"
+            },
+            "filters":[
+            ]
+        }
+    }                         
+        ''' % (plot_type, x_prim_param, x_prim_bm, binning_param, x_cat_param, y_am, y_ap)
 
-  #  json_data = '''
-  #                  {
-  #                      "plot_parameters":{
-  #                          "time_scale": "%s",
-  #                          "compare_parameter": "%s",
-  #                          "aggregation_method": "%s",
-  #                          "aggregation_parameter": "%s",
-  #                          "filters": []
-  #                      }
-  #                  }
-  #                  ''' % (pass_freq, compare_param, agg_method, agg_param)
+    #  json_data = '''
+    #                  {
+    #                      "plot_parameters":{
+    #                          "time_scale": "%s",
+    #                          "compare_parameter": "%s",
+    #                          "aggregation_method": "%s",
+    #                          "aggregation_parameter": "%s",
+    #                          "filters": []
+    #                      }
+    #                  }
+    #                  ''' % (pass_freq, compare_param, agg_method, agg_param)
 
     ly = get_layout(json_data, filter_data)
 
@@ -235,12 +233,12 @@ def update_plot(request):
     request.session['session_layouts'] = layouts_session
 
     context = {'script': script, 'div': div,
-                'plot_type':plot_type, 'x_prim_param': x_prim_param, 'x_prim_bm': x_prim_bm,
-                'x_prim_bp': x_prim_bp, 'x_cat_param': x_cat_param, 'y_am': y_am, 'y_ap': y_ap,
-                'eng': eng, 'tran': tran, 'miles':miles}
+               'plot_type': plot_type, 'x_prim_param': x_prim_param, 'x_prim_bm': x_prim_bm,
+               'x_prim_bp': x_prim_bp, 'x_cat_param': x_cat_param, 'y_am': y_am, 'y_ap': y_ap,
+               'eng': eng, 'tran': tran, 'miles': miles}
 
- #   context = {'script': script, 'div': div, 'cp': compare_param, 'am': agg_method, 'ap': agg_param, 'eng': eng,
- #              'tran': tran, 'miles': miles, 'freq': freq}
+    #   context = {'script': script, 'div': div, 'cp': compare_param, 'am': agg_method, 'ap': agg_param, 'eng': eng,
+    #              'tran': tran, 'miles': miles, 'freq': freq}
     return render(request, 'single.html', context)
 
 
@@ -248,14 +246,14 @@ def update_plot(request):
 def get_iframe(request):
     if request.POST:
         plot_type = request.POST.get('plot_type') if 'plot_type' in request.POST else 'pie'
-        
+
         # Common parameters
         x_cat_param = request.POST.get('x_cat_param') if 'x_cat_param' in request.POST else ''
         y_am = request.POST.get('y_am') if 'y_am' in request.POST else ''
         y_ap = request.POST.get('y_ap') if 'y_ap' in request.POST else ''
-        
+
         querystr = 'plot_type={0}&x_cat_param={1}&y_am={2}&y_ap={3}'.format(plot_type, x_cat_param, y_am, y_ap)
-        if plot_type == 'line' or plot_type=='bar':
+        if plot_type == 'line' or plot_type == 'bar':
             x_prim_param = request.POST.get('x_prim_param') if 'x_prim_param' in request.POST else ''
             x_prim_bm = request.POST.get('x_prim_bm') if 'x_prim_bm' in request.POST else ''
             querystr = '{0}&x_prim_param={1}&x_prim_bm={2}'.format(querystr, x_prim_param, x_prim_bm)
@@ -264,7 +262,6 @@ def get_iframe(request):
             x_prim_bp = request.POST.get('x_prim_bp') if 'x_prim_bp' in request.POST else ''
             querystr = '{0}&x_prim_bp={1}'.format(querystr, x_prim_bp)
 
-
         iframe_html = """
             <iframe width="100%" height="100%" frameborder="0" scrolling="no" onload="resizeIframe(this)"
             src="/update_plot?{0}">
@@ -272,4 +269,3 @@ def get_iframe(request):
         """.format(querystr)
 
         return HttpResponse(iframe_html.strip(), content_type='text/html')
-

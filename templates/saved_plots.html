@@ -3,34 +3,35 @@
 {% block title %}Welcome, {{ username }}{% endblock %}
 
 {% block content %}
-<div class="dropdown" style="padding-left:15px">
-    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-        Select Canvas
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        {% if plots %}
-        {% for plot in plots %}
-        <li><a class="dropdown-toggle plot_link" href="#" mydata="{{ plot.plots }}" myname="{{ plot.name }}">{{ plot.name }}</a></li>
-        {% endfor %}
-        {% else %}
-        <p>No Saved Plots</p>
-        {% endif %}
-    </ul>
+    <div class="dropdown" style="padding-left:15px">
+        <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+            Select Canvas
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            {% if plots %}
+                {% for plot in plots %}
+                    <li><a class="dropdown-toggle plot_link" href="#" mydata="{{ plot.plots }}"
+                           myname="{{ plot.name }}">{{ plot.name }}</a></li>
+                {% endfor %}
+            {% else %}
+                <p>No Saved Plots</p>
+            {% endif %}
+        </ul>
 
-</div>
-<div id="plot_container" class="col-md-12"></div>
+    </div>
+    <div id="plot_container" class="col-md-12"></div>
 
-<script>
+    <script>
         function resizeIframe(obj) {
             obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
         }
 
 
-</script>
+    </script>
 {% endblock %}
 
 {% block extras %}
-{{ script|safe }}
+    {{ script|safe }}
 {% endblock %}
