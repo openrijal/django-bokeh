@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome, {{ username }}{% endblock %}
+
+{% block actions %}
+{% if is_loggedin %}
+<ul class="nav navbar-nav navbar-right">
+<!-- <form class="navbar-form">
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="Search">
+  </div>
+  <button type="submit" class="btn btn-raised btn-warning btn-sm">&gt;&gt;</button>
+</form> -->
+  {% if is_admin %}
+  <li><a href="~admin/">Administration</a></li>
+  {% endif %}
+  <li><a href="/logout/">Logout</a></li>
+</ul>
+{% else %}
+<ul class="nav navbar-nav navbar-right">
+  <li><a href="/login/">Login</a></li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="well page">
+      <p>This is the home page. Try to do something from the menu.</p>
+    </div>
+  </div>
+{% endblock %}

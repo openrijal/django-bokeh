@@ -33,37 +33,58 @@
             color: #7f7f7f;
             background-color: #fff;
         }
+        .form-control{
+       height:26px;
+       font-size:11px;
+       }
+       .input-group-addon {
+       font-size:12px;}
     </style>
 </head>
 
 <body>
-<div class="col-md-12">
-    <form class="form-inline" id="filterIframeForm"
-          action="/update_plot?compare_parameter={{ cp }}&aggregation_method={{ am }}&aggregation_parameter={{ ap }}"
+<div class="container">
+   <form class="form-inline " id="filterIframeForm"
+          action="/update_plot?plot_type={{ plot_type }}&x_prim_param={{ x_prim_param }}&x_prim_bm={{ x_prim_bm }}&x_prim_bp={{ x_prim_bp }}&x_cat_param={{ x_cat_param }}&y_am={{ y_am }}&y_ap={{ y_ap }}"
           method="post">
-        <input type="hidden" id="filFrmDefault" name="default_filters" value="compare_parameter={{ cp }}&aggregation_method={{ am }}&aggregation_parameter={{ ap }}">
-        <div class="form-group col-md-3">
-            <label for="eng">ENG</label><br/>
-            <input type="text" class="form-control" name="eng" id="filFrmEng"
-                   value="{{ eng }}" placeholder="something..."/>
+        <input type="hidden" id="filFrmDefault" name="default_filters" value="plot_type={{ plot_type }}&x_prim_param={{ x_prim_param }}&x_prim_bm={{ x_prim_bm }}&x_prim_bp={{ x_prim_bp }}&x_cat_param={{ x_cat_param }}&y_am={{ y_am }}&y_ap={{ y_ap }}">
+
+        <div class="row">
+        <div class="col-md-6 col-xs-6">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">ENG</span>
+                <input type="text" class="form-control" name="eng" id="filFrmEng"
+                   value="{{ eng }}" />
+            </div>
         </div>
-        <div class="form-group col-md-3">
-            <label for="tran">TRAN</label><br/>
-            <input type="text" class="form-control" name="tran" id="filFrmTran"
-                   value="{{ tran }}" placeholder="something..."/>
+        <div class="col-md-6 col-xs-6">
+             <div class="input-group">
+                <span class="input-group-addon innerspan" id="basic-addon2">TRAN</span>
+                <input type="text" class="form-control" name="tran" id="filFrmTran"
+                   value="{{ tran }}" />
+             </div>
         </div>
-        <div class="form-group col-md-3">
-            <label for="miles">MILES</label><br/>
-            <input type="text" class="form-control" name="miles" id="filFrmMiles"
-                   value="{{ miles }}" placeholder="something..."/>
         </div>
-        <div class="form-group col-md-3">
-            <label for="freq">PERIOD</label><br/>
-            <select class="form-control" name="freq" id="filFrmFreq">
-                <option value="DAY" {% if freq == 'DAY' %}selected{% endif %}>DAY</option>
-                <option value="MONTH" {% if freq == 'MONTH' %}selected{% endif %}>MONTH</option>
-                <option value="QUARTER" {% if freq == 'QUARTER' %}selected{% endif %}>QUARTER</option>
+        <div class="row" style="margin-top:6px;">
+         <div class="col-md-6 col-xs-6">
+              <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon3">MILES</span>
+                 <input type="text" class="form-control" name="miles" id="filFrmMiles"
+                   value="{{ miles }}" />
+              </div>
+         </div>
+            {% if x_prim_param == 'REPAIR-DT' %}
+            <div class="col-md-6 col-xs-6">
+            <div class="input-group">
+             <span class="input-group-addon" id="basic-addon4">Frequency</span>
+            <select class="form-control" name="x_prim_bp" id="filFrmFreq">
+                <option value="DAY" {% if x_prim_bp == 'DAY' %}selected{% endif %}>DAY</option>
+                <option value="MONTH" {% if x_prim_bp == 'MONTH' %}selected{% endif %}>MONTH</option>
+                <option value="QUARTER" {% if x_prim_bp == 'QUARTER' %}selected{% endif %}>QUARTER</option>
             </select>
+            </div>
+            </div>
+            {% endif %}
         </div>
     </form>
 </div>

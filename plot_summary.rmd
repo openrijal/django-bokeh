@@ -1,0 +1,25 @@
+## Plot Summary
+
+The following document summarises the basic types of plots supported by the system. 
+The system currently supports the following three types of plots:
+  * line
+  * bar
+  * pie
+
+
+### Line graph
+The line graph can be used to primarily display **_continuous_** data. 
+  * The x-axis should contain some continuous data, either ***dates*** or ***numbers*** 
+  * The y-axis should contain result of some aggregate functions like ***count***, ***sum*** or ***average*** 
+  * There can be one additional dimension for ***categorical*** variables which can be represented by different colours of multi-line graph and summarised in the legend
+
+### Bar graph
+The bar graph can be used to display values which are **_discrete_** in nature.
+  * The x axis should contain either ***date*** or ***numbers*** as parameters; both of which should be binned to groups 
+  * The y-axis should contain results of aggregate functions like ***count***, ***sum*** or ***average*** 
+  * The x-axis can also contain an additional group parameter, which should be ***categorical*** in nature
+
+### Pie Chart
+The pie chart can be used to display the summary **_breakdown_** of a single parameter by a category. eg: Cost breakdown by ENG Type.
+  * The pie chart requires a category parameter, which should be categorical in nature
+  * The values of the pie represent the contribution of each ***category*** to the big picture. So the values should always be numerical, in most cases, this is the result of an aggregate function like ***count***, ***sum*** or ***average***

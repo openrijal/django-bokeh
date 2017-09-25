@@ -1,36 +1,36 @@
 {% extends 'base.html' %}
 
-{% load manipulators %}
-
 {% block title %}Welcome, {{ username }}{% endblock %}
 
-{% block actions %}
-    {% if is_loggedin %}
-        <ul class="nav navbar-nav navbar-right">
-            {% if is_admin %}
-                <li><a href="~admin/">Administration</a></li>
-            {% endif %}
-            <li><a href="/logout/">Logout</a></li>
-        </ul>
-    {% else %}
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="/login/">Login</a></li>
-        </ul>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
-    <ul>
-    {% if plots %}
+<div class="dropdown" style="padding-left:15px">
+    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+        Select Canvas
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% if plots %}
         {% for plot in plots %}
-        <li><a href="/view_plot/{{ plot.slug }}">{{ plot.name }}</a></li>
+        <li><a class="dropdown-toggle plot_link" href="#" mydata="{{ plot.plots }}" myname="{{ plot.name }}">{{ plot.name }}</a></li>
         {% endfor %}
-    {% else %}
+        {% else %}
         <p>No Saved Plots</p>
-    {% endif %}
+        {% endif %}
     </ul>
+
+</div>
+<div id="plot_container" class="col-md-12"></div>
+
+<script>
+        function resizeIframe(obj) {
+            obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+        }
+
+
+</script>
 {% endblock %}
 
 {% block extras %}
-    {{ script|safe }}
+{{ script|safe }}
 {% endblock %}
