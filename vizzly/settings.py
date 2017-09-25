@@ -69,6 +69,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'vizzly.wsgi.application'
 
+LOGOUT_REDIRECT_URL = '/'
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
