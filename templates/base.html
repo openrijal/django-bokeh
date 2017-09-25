@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
 
     <title>{% block title %}Welcome{% endblock %}</title>
 
@@ -44,59 +44,44 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-default">
-        <nav class="container-fluid">
+        <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#hr-menu-navbar-collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="https://www.hrforecast.de/" target="_blank">
                     <img alt="HRForecast" src="/static/img/HRForecast_Logo.svg">
                 </a>
             </div>
-            {% if is_loggedin %}
-                <div class="navbar-collapse collapse navbar-responsive-collapse">
-                    <ul class="nav navbar-nav">
-                        <li>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                                <span class="glyphicon glyphicon-menu-hamburger"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-                                <li><a href="#"><span class="info-box-icon bg-green glyphicon glyphicon-signal"></span>
-                                    Single Case Warranty Analysis</a></li>
-                                <li><a href="/global/"><span
-                                        class="info-box-icon bg-green glyphicon glyphicon-equalizer"></span> Global
-                                    Warranty Analysis</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                    {% block actions %}
 
-                    {% endblock %}
-                    <ul class="nav navbar-nav navbar-right" style="margin-left:20px">
-                        {% if is_admin %}
-                            <li><a href="~admin/">Administration</a></li>
-                        {% endif %}
-                        <a href="/logout/" title="Logout">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="hr-menu-navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-signal"></span>
+                        Single Case Warranty Analysis</a></li>
+                    <li><a href="/global/"><span class="glyphicon glyphicon-equalizer"></span>
+                        Global Warranty Analysis</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <a class="navbar-brand" href="https://www.continental-corporation.com/en" target="_blank">
+                        <img alt="Continental" src="/static/img/Continental-Logo.svg">
+                    </a>
+                    {% if is_admin %}
+                        <li><a href="~admin/">Administration</a></li>
+                    {% endif %}
+                    <a href="/logout/" title="Logout">
                         <span class="glyphicon glyphicon-log-out"
                               style="margin-top: 16px;color:rgb(246,139,29)"></span>
-                        </a>
-                    </ul>
-{#                    <ul class="nav navbar-nav navbar-right">#}
-{#                        <a href="/" title="Home">#}
-{#                        <span class="glyphicon glyphicon-home"#}
-{#                              style="margin-top: 16px;color:rgb(246,139,29)"></span>#}
-{#                        </a>#}
-{#                    </ul>#}
-                    <div class="navbar-header navbar-right">
-                        <a class="navbar-brand" href="https://www.continental-corporation.com/en" target="_blank">
-                            <img alt="Continental" src="/static/img/Continental-Logo.svg">
-                        </a>
-                    </div>
-
-                </div>
-            {% endif %}
-        </nav>
+                    </a>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
     </nav>
 </div>
 
